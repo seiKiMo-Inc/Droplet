@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import moe.seikimo.droplet.network.NetworkManager;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
+import moe.seikimo.droplet.network.java.JavaInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public final class Server {
     public void start() {
         // Register network interfaces.
         this.networkManager.registerInterface(new BedrockInterface(this));
+        this.networkManager.registerInterface(new JavaInterface(this));
     }
 
     /**
