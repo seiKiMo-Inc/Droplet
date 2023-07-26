@@ -3,7 +3,6 @@ package moe.seikimo.droplet.network.java;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
-import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -20,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public final class JavaInterface implements NetworkInterface {
@@ -41,6 +39,9 @@ public final class JavaInterface implements NetworkInterface {
         this.mcServer.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
         this.mcServer.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, true);
         this.mcServer.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) this::getServerInfo);
+
+        // Add session listener.
+        this.mcServer.addListener(new JavaServerAdapter());
 
         this.mcServer.bind(false);
     }

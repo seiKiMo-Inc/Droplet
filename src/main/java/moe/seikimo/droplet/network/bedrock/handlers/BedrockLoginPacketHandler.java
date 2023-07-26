@@ -19,10 +19,9 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
     @Override
     public PacketSignal handle(RequestNetworkSettingsPacket packet) {
         var protocol = packet.getProtocolVersion();
-        var codec = ProtocolInfo.BEDROCK_CODEC;
 
         // Check if the protocols match.
-        var serverProtocol = codec.getProtocolVersion();
+        var serverProtocol = ProtocolInfo.BEDROCK_PROTOCOL;
         var statusPacket = new PlayStatusPacket();
         if (protocol > serverProtocol) {
             statusPacket.setStatus(Status.LOGIN_FAILED_SERVER_OLD);
@@ -37,7 +36,7 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
         }
 
         // Set Bedrock codec version.
-        this.session.setCodec(codec);
+        this.session.setCodec(ProtocolInfo.BEDROCK_CODEC);
 
         // Establish compression settings.
         var settingsPacket = new NetworkSettingsPacket();
