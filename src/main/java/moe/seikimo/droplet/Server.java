@@ -5,7 +5,13 @@ import lombok.Setter;
 import moe.seikimo.droplet.network.NetworkManager;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.java.JavaInterface;
+import moe.seikimo.droplet.world.io.AnvilRegionFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +25,8 @@ public final class Server {
 
     @Getter private static Server instance;
 
+    @Getter private final Logger logger
+            = LoggerFactory.getLogger("Server");
     private final NetworkManager networkManager
             = new NetworkManager(this);
     @Getter private final List<Object> onlinePlayers
