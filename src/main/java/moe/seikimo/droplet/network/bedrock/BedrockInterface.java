@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import lombok.Getter;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkInterface;
 import moe.seikimo.droplet.network.bedrock.handlers.BedrockLoginPacketHandler;
@@ -13,9 +14,11 @@ import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 import org.cloudburstmc.protocol.bedrock.BedrockPong;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitializer;
+import org.cloudburstmc.protocol.bedrock.util.EncryptionUtils;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +28,8 @@ public final class BedrockInterface implements NetworkInterface {
 
     private final List<Channel> channels = new ArrayList<>();
     private final BedrockPong advertisement = new BedrockPong();
+
+    @Getter private final KeyPair keyPair = EncryptionUtils.createKeyPair();
 
     public BedrockInterface(Server server) {
         this.server = server;
@@ -66,9 +71,9 @@ public final class BedrockInterface implements NetworkInterface {
                 .edition("MCPE")
                 .motd(name).subMotd(subName)
                 .playerCount(this.server.getPlayerCount())
-                .maximumPlayerCount(1000)
-                .version("1.20.10")
-                .protocolVersion(594)
+                .maximumPlayerCount(100)
+                .version("1.20.41")
+                .protocolVersion(622)
                 .gameType("Survival")
                 .nintendoLimited(false);
         var asBuffer = this.advertisement.toByteBuf();
