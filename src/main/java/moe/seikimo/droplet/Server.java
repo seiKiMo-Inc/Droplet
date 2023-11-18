@@ -5,6 +5,7 @@ import lombok.Setter;
 import moe.seikimo.droplet.network.NetworkManager;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.java.JavaInterface;
+import moe.seikimo.droplet.utils.objects.Config;
 import moe.seikimo.droplet.world.io.AnvilRegionFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,8 @@ public final class Server {
             = new NetworkManager(this);
     @Getter private final List<Object> onlinePlayers
             = new ArrayList<>();
+    @Getter private final Config config
+            = Config.read(new File("server.properties"));
 
     @Getter @Setter private String ip = "0.0.0.0";
     @Getter @Setter private short bedrockPort = 19132;
@@ -40,6 +43,11 @@ public final class Server {
      * Starts the server.
      */
     public void start() {
+        // Check if the config is valid.
+        if (this.config == null) {
+            throw new RuntimeException("No configuration detected.");
+        }
+
         // Register network interfaces.
         this.networkManager.registerInterface(new BedrockInterface(this));
         this.networkManager.registerInterface(new JavaInterface(this));

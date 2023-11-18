@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>mcprotocollib</artifactId>
-            <version>1.20-1-SNAPSHOT</version>
+            <version>1.20.2-1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
@@ -102,6 +102,14 @@
             <artifactId>jjwt-gson</artifactId>
             <version>0.12.3</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Data Handling -->
+        <dependency>
+            <groupId>moe.seikimo</groupId>
+            <artifactId>magix-handler</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
