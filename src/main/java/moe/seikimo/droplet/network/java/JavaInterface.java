@@ -7,7 +7,7 @@ import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
-import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.packetlib.AbstractServer;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -47,8 +47,8 @@ public final class JavaInterface implements NetworkInterface {
         this.mcServer.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) this::getServerInfo);
 
         // Register packet handlers.
-        this.getPacketHandler().register(ServerboundKeyPacket.class,
-                (JavaNetworkSession session, ServerboundKeyPacket packet) ->
+        this.getPacketHandler().register(ServerboundFinishConfigurationPacket.class,
+                (JavaNetworkSession session, ServerboundFinishConfigurationPacket packet) ->
                         JavaLoginPacketHandler.handle(session, packet));
 
         // Add session listener.
