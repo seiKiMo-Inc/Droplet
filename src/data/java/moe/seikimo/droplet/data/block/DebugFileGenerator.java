@@ -1,4 +1,4 @@
-package moe.seikimo.droplet.data.world;
+package moe.seikimo.droplet.data.block;
 
 import lombok.Getter;
 import moe.seikimo.droplet.data.Constants;

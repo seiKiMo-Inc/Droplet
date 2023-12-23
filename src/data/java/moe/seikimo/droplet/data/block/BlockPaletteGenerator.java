@@ -1,4 +1,4 @@
-package moe.seikimo.droplet.data.world;
+package moe.seikimo.droplet.data.block;
 
 import lombok.Getter;
 import moe.seikimo.droplet.data.Constants;
@@ -8,6 +8,7 @@ import moe.seikimo.droplet.data.loaders.JavaBedrockBlockMap;
 import moe.seikimo.droplet.data.loaders.MinecraftBlockMap;
 import moe.seikimo.droplet.data.types.MinecraftBlock;
 import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,7 @@ public final class BlockPaletteGenerator {
             paletteMap.put(minecraft.hashCode(), id);
         });
 
-        var paletteIndex = 0;
-        var dropletPalette = NbtMap.builder();
+        var dropletPalette = new ArrayList<NbtMap>();
 
         var noIdBlocks = new ArrayList<MinecraftBlock>();
         for (var entry : USE_BLOCKS ?
@@ -62,15 +62,17 @@ public final class BlockPaletteGenerator {
                     .putCompound("jstates", javaBlock.propertiesNbt())
                     .putCompound("bstates", bedrockBlock.propertiesNbt());
 
-            dropletPalette.putCompound(
-                    String.valueOf(paletteIndex++),
-                    block.build());
+            dropletPalette.add(block.build());
         }
+
+        var nbtData = NbtMap.builder()
+                .putList("blocks", NbtType.COMPOUND, dropletPalette)
+                .build();
 
         try {
             // Write to file.
             var stream = Stream.oNbt(Constants.DROPLET_PALETTE_OUTPUT);
-            stream.writeTag(dropletPalette.build());
+            stream.writeTag(nbtData);
             stream.close();
 
             BlockPaletteGenerator.getLogger().info("Wrote block palette to file.");

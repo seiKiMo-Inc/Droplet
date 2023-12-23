@@ -2,8 +2,8 @@ package moe.seikimo.droplet.data;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import moe.seikimo.droplet.data.world.BlockPaletteGenerator;
-import moe.seikimo.droplet.data.world.DebugFileGenerator;
+import moe.seikimo.droplet.data.block.BlockPaletteGenerator;
+import moe.seikimo.droplet.data.block.DebugFileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
