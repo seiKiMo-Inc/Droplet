@@ -1,10 +1,14 @@
 package moe.seikimo.droplet.network.bedrock.handlers;
 
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.ProtocolInfo;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
+import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
+import moe.seikimo.droplet.network.shared.play.DropletStartGamePacket;
+import moe.seikimo.droplet.utils.enums.Dimension;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm;
 import org.cloudburstmc.protocol.bedrock.packet.*;
@@ -107,9 +111,26 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
         // Prepare a response packet.
         var statusPacket = new PlayStatusPacket();
         statusPacket.setStatus(Status.LOGIN_SUCCESS);
-
-        // Send the packet.
         this.session.sendPacketImmediately(statusPacket);
+
+        // Prepare the resource info packet.
+        var resourcesPacket = new ResourcePacksInfoPacket();
+        resourcesPacket.setForcedToAccept(true);
+        resourcesPacket.setForcingServerPacksEnabled(true);
+        this.session.sendPacketImmediately(resourcesPacket);
+
+        // TODO: Replace with proper resource pack implementation.
+        var stackPacket = new ResourcePackStackPacket();
+        stackPacket.setForcedToAccept(true);
+        stackPacket.setExperimentsPreviouslyToggled(true);
+        stackPacket.setGameVersion(ProtocolInfo.BEDROCK_CODEC.getMinecraftVersion());
+        this.session.sendPacketImmediately(stackPacket);
+
+        // Prepare the game start packet.
+        var startPacket = new DropletStartGamePacket(
+                0, false, GameMode.CREATIVE, Dimension.OVERWORLD
+        );
+        BedrockNetworkSession.from(this.session).sendPacket(startPacket);
 
         return PacketSignal.HANDLED;
     }
