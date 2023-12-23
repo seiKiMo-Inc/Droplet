@@ -1,10 +1,11 @@
 package moe.seikimo.droplet.player;
 
+import moe.seikimo.droplet.entity.LivingEntity;
 import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.utils.enums.Platform;
 import moe.seikimo.droplet.world.World;
 
-public interface Player {
+public interface Player extends LivingEntity {
     /**
      * @return The player's network handle.
      */
