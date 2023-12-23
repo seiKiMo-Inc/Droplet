@@ -3,7 +3,7 @@
 
     <appender name="STDOUT" class="moe.seikimo.droplet.utils.objects.JLineLogbackAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss} &lt;%highlight(%level):%gray(%class{0})&gt; %msg%n</pattern>
+            <pattern>[%cyan(%d{HH:mm:ss})] [%highlight(%level)] [%white(%logger{0})] %msg%n</pattern>
         </encoder>
     </appender>
 
