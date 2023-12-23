@@ -101,7 +101,8 @@ public final class BedrockInterface implements NetworkInterface {
         protected void initSession(BedrockServerSession session) {
             session.setLogging(true);
             session.setPacketHandler(new BedrockLoginPacketHandler(
-                    session, server, BedrockInterface.this));
+                    session, BedrockNetworkSession.from(session),
+                    server, BedrockInterface.this));
         }
     }
 }

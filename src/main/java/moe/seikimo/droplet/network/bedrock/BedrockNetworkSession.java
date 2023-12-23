@@ -2,8 +2,10 @@ package moe.seikimo.droplet.network.bedrock;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.network.shared.BasePacket;
+import moe.seikimo.droplet.player.Player;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 
 import java.util.Map;
@@ -26,6 +28,8 @@ public final class BedrockNetworkSession extends NetworkSession {
     }
 
     private final BedrockServerSession handle;
+
+    @Setter private Player player;
 
     @Override
     public void sendPacket(BasePacket packet) {

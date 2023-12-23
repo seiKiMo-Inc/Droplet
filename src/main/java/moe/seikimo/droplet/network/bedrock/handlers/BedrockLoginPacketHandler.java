@@ -4,12 +4,15 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
+import moe.seikimo.droplet.entity.DropletEntity;
 import moe.seikimo.droplet.network.ProtocolInfo;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
 import moe.seikimo.droplet.network.shared.play.DropletChunkPacket;
 import moe.seikimo.droplet.network.shared.play.DropletStartGamePacket;
+import moe.seikimo.droplet.player.DropletPlayer;
 import moe.seikimo.droplet.utils.enums.Dimension;
+import moe.seikimo.droplet.utils.enums.Platform;
 import moe.seikimo.droplet.world.biome.Biome;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm;
@@ -27,6 +30,8 @@ import java.security.spec.InvalidKeySpecException;
 @RequiredArgsConstructor
 public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
+    private final BedrockNetworkSession networkSession;
+
     private final Server server;
     private final BedrockInterface netInterface;
 
@@ -96,6 +101,16 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
             var secretKey = EncryptionUtils.getSecretKey(
                     keyPair.getPrivate(), clientPublicKey, salt);
             this.session.enableEncryption(secretKey);
+
+            // Create a new player instance.
+            // TODO: Fetch platform from client.
+            var player = new DropletPlayer(
+                    DropletEntity.nextEntityId++,
+                    this.server.getDefaultWorld(),
+                    this.networkSession,
+                    Platform.WINDOWS);
+            this.networkSession.setPlayer(player);
+            this.networkSession.setPlayer(player);
         } catch (JoseException | NoSuchAlgorithmException | InvalidKeySpecException exception) {
             this.server.getLogger().warn("Failed to parse JWT chain data.", exception);
             this.session.close("Invalid JWT chain data.");
@@ -133,7 +148,7 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
         var startPacket = new DropletStartGamePacket(
                 0, false, GameMode.CREATIVE, Dimension.OVERWORLD
         );
-        BedrockNetworkSession.from(this.session).sendPacket(startPacket);
+        this.networkSession.sendPacket(startPacket);
 
         // Prepare the creative content packet.
         var creativePacket = new CreativeContentPacket();
@@ -149,11 +164,16 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
         // Prepare the level chunk packet.
         var chunkPacket = new DropletChunkPacket(
                 this.server.getDefaultWorld().getChunkAt(0, 0));
-        BedrockNetworkSession.from(this.session).sendPacket(chunkPacket);
+        this.networkSession.sendPacket(chunkPacket);
 
         // Send play status packet.
         statusPacket.setStatus(Status.PLAYER_SPAWN);
         this.session.sendPacketImmediately(statusPacket);
+
+        // Set the packet handler.
+        this.session.setPacketHandler(
+                new BedrockPlayerPacketHandler(
+                        this.networkSession));
 
         return PacketSignal.HANDLED;
     }

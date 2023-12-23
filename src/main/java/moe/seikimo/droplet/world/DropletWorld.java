@@ -18,8 +18,6 @@ public final class DropletWorld implements World {
     private final Map<ChunkPos, Chunk> chunks
             = new HashMap<>();
 
-    private long nextEntityId = 0;
-
     @Override
     public void addChunk(Chunk chunk) {
         this.getChunks().put(EncodingUtils.convert(
@@ -29,10 +27,5 @@ public final class DropletWorld implements World {
     @Override
     public Chunk getChunkAt(int x, int z) {
         return this.getChunks().get(EncodingUtils.convert(x, z));
-    }
-
-    @Override
-    public long getNextEntityId() {
-        return this.nextEntityId++;
     }
 }

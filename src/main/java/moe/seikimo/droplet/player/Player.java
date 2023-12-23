@@ -20,4 +20,21 @@ public interface Player extends LivingEntity {
      * @return The world the player is in.
      */
     World getWorld();
+
+    /**
+     * @return Whether the player is spawned.
+     */
+    boolean isSpawned();
+
+    /**
+     * @return The player's render distance.
+     */
+    int getRenderDistance();
+
+    /**
+     * Sets the player's render distance.
+     *
+     * @param renderDistance The new render distance.
+     */
+    void setRenderDistance(int renderDistance);
 }

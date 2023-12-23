@@ -38,9 +38,4 @@ public interface World {
      * @param chunk The chunk to add.
      */
     void addChunk(Chunk chunk);
-
-    /**
-     * @return The next entity ID.
-     */
-    long getNextEntityId();
 }
