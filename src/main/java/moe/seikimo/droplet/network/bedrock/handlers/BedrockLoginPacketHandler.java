@@ -7,10 +7,13 @@ import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.ProtocolInfo;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
+import moe.seikimo.droplet.network.shared.play.DropletChunkPacket;
 import moe.seikimo.droplet.network.shared.play.DropletStartGamePacket;
 import moe.seikimo.droplet.utils.enums.Dimension;
+import moe.seikimo.droplet.world.biome.Biome;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm;
+import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.*;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket.Status;
 import org.cloudburstmc.protocol.bedrock.util.EncryptionUtils;
@@ -131,6 +134,26 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
                 0, false, GameMode.CREATIVE, Dimension.OVERWORLD
         );
         BedrockNetworkSession.from(this.session).sendPacket(startPacket);
+
+        // Prepare the creative content packet.
+        var creativePacket = new CreativeContentPacket();
+        creativePacket.setContents(this.server.getItemManager()
+                .getCreativeItems().toArray(new ItemData[0]));
+        this.session.sendPacketImmediately(creativePacket);
+
+        // Prepare the biome definition packet.
+        var biomePacket = new BiomeDefinitionListPacket();
+        biomePacket.setDefinitions(Biome.getBiomeDefinitions());
+        this.session.sendPacketImmediately(biomePacket);
+
+        // Prepare the level chunk packet.
+        var chunkPacket = new DropletChunkPacket(
+                this.server.getDefaultWorld().getChunkAt(0, 0));
+        BedrockNetworkSession.from(this.session).sendPacket(chunkPacket);
+
+        // Send play status packet.
+        statusPacket.setStatus(Status.PLAYER_SPAWN);
+        this.session.sendPacketImmediately(statusPacket);
 
         return PacketSignal.HANDLED;
     }
