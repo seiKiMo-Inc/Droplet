@@ -111,6 +111,14 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Serialization -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.25.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <repositories>

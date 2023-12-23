@@ -39,3 +39,6 @@ build/
 
 ### Application ###
 run/
+
+### Source ###
+src/main/generated/
