@@ -29,6 +29,6 @@ public final class BedrockNetworkSession extends NetworkSession {
 
     @Override
     public void sendPacket(BasePacket packet) {
-        this.getHandle().sendPacket(packet.toBedrock());
+        packet.toBedrock().forEach(this.getHandle()::sendPacket);
     }
 }

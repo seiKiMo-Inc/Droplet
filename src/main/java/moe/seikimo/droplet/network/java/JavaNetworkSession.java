@@ -30,6 +30,6 @@ public final class JavaNetworkSession extends NetworkSession implements DataRece
 
     @Override
     public void sendPacket(BasePacket packet) {
-        this.getHandle().send(packet.toJava());
+        packet.toJava().forEach(this.getHandle()::send);
     }
 }
