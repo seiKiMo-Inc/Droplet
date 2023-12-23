@@ -19,6 +19,7 @@ import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.cloudburstmc.protocol.common.util.OptionalBoolean;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,100 +39,99 @@ public final class DropletStartGamePacket extends BasePacket {
     private final Dimension dimension; // Dimension Name; Dimension
 
     @Override
-    public BedrockPacket toBedrock() {
+    public Collection<BedrockPacket> toBedrock() {
         var server = Server.getInstance();
         var config = server.getConfig();
 
-        var packet = new StartGamePacket();
-        packet.setUniqueEntityId(this.entityId);
-        packet.setRuntimeEntityId(this.entityId);
-        packet.setPlayerGameType(convert(this.gameMode));
-        packet.setPlayerPosition(Vector3f.ZERO);
-        packet.setRotation(Vector2f.ZERO);
-        packet.setSeed(0);
-        packet.setSpawnBiomeType(SpawnBiomeType.DEFAULT);
-        packet.setCustomBiomeName("plains");
-        packet.setDimensionId(this.dimension.getId());
-        packet.setGeneratorId(0);
-        packet.setLevelGameType(GameType.SURVIVAL);
-        packet.setDifficulty(1);
-        packet.setDefaultSpawn(Vector3i.ZERO);
-        packet.setAchievementsDisabled(false);
+        var gamePacket = new StartGamePacket();
+        gamePacket.setUniqueEntityId(this.entityId);
+        gamePacket.setRuntimeEntityId(this.entityId);
+        gamePacket.setPlayerGameType(convert(this.gameMode));
+        gamePacket.setPlayerPosition(Vector3f.ZERO);
+        gamePacket.setRotation(Vector2f.ZERO);
+        gamePacket.setSeed(0);
+        gamePacket.setSpawnBiomeType(SpawnBiomeType.DEFAULT);
+        gamePacket.setCustomBiomeName("plains");
+        gamePacket.setDimensionId(this.dimension.getId());
+        gamePacket.setGeneratorId(0);
+        gamePacket.setLevelGameType(GameType.SURVIVAL);
+        gamePacket.setDifficulty(1);
+        gamePacket.setDefaultSpawn(Vector3i.ZERO);
+        gamePacket.setAchievementsDisabled(false);
         // setEditorWorldType
-        packet.setCreatedInEditor(false);
-        packet.setExportedFromEditor(false);
-        packet.setDayCycleStopTime(0);
-        packet.setEduEditionOffers(0);
-        packet.setEduFeaturesEnabled(true);
-        packet.setEducationProductionId("");
-        packet.setRainLevel(0f);
-        packet.setLightningLevel(0f);
-        packet.setPlatformLockedContentConfirmed(false);
-        packet.setMultiplayerGame(true);
-        packet.setBroadcastingToLan(false);
-        packet.setXblBroadcastMode(GamePublishSetting.FRIENDS_OF_FRIENDS);
-        packet.setPlatformBroadcastMode(GamePublishSetting.PUBLIC);
-        packet.setCommandsEnabled(true);
-        packet.setTexturePacksRequired(true);
+        gamePacket.setCreatedInEditor(false);
+        gamePacket.setExportedFromEditor(false);
+        gamePacket.setDayCycleStopTime(0);
+        gamePacket.setEduEditionOffers(0);
+        gamePacket.setEduFeaturesEnabled(true);
+        gamePacket.setEducationProductionId("");
+        gamePacket.setRainLevel(0f);
+        gamePacket.setLightningLevel(0f);
+        gamePacket.setPlatformLockedContentConfirmed(false);
+        gamePacket.setMultiplayerGame(true);
+        gamePacket.setBroadcastingToLan(false);
+        gamePacket.setXblBroadcastMode(GamePublishSetting.FRIENDS_OF_FRIENDS);
+        gamePacket.setPlatformBroadcastMode(GamePublishSetting.PUBLIC);
+        gamePacket.setCommandsEnabled(true);
+        gamePacket.setTexturePacksRequired(true);
         // setGamerules
         // setExperiments
-        packet.setExperimentsPreviouslyToggled(true);
-        packet.setBonusChestEnabled(false);
-        packet.setStartingWithMap(false);
-        packet.setDefaultPlayerPermission(PlayerPermission.CUSTOM);
-        packet.setServerChunkTickRange(0);
-        packet.setBehaviorPackLocked(false);
-        packet.setResourcePackLocked(false);
-        packet.setFromLockedWorldTemplate(false);
-        packet.setUsingMsaGamertagsOnly(false);
-        packet.setFromWorldTemplate(false);
-        packet.setWorldTemplateOptionLocked(false);
-        packet.setOnlySpawningV1Villagers(false);
-        packet.setDisablingPersonas(false);
-        packet.setDisablingCustomSkins(false);
-        packet.setEmoteChatMuted(true);
-        packet.setVanillaVersion("1.20.41");
-        packet.setLimitedWorldWidth(0);
-        packet.setLimitedWorldHeight(0);
-        packet.setNetherType(true);
-        packet.setEduSharedUriResource(EduSharedUriResource.EMPTY);
-        packet.setForceExperimentalGameplay(OptionalBoolean.empty());
-        packet.setLevelId("MA=="); // 0 in Base64
-        packet.setLevelName(config.getString("server.name", "Droplet"));
-        packet.setPremiumWorldTemplateId(UUID.randomUUID().toString());
-        packet.setWorldTemplateId(UUID.randomUUID());
-        packet.setTrial(false);
-        packet.setAuthoritativeMovementMode(AuthoritativeMovementMode.CLIENT);
-        packet.setCurrentTick(0L);
-        packet.setEnchantmentSeed(0);
+        gamePacket.setExperimentsPreviouslyToggled(true);
+        gamePacket.setBonusChestEnabled(false);
+        gamePacket.setStartingWithMap(false);
+        gamePacket.setDefaultPlayerPermission(PlayerPermission.CUSTOM);
+        gamePacket.setServerChunkTickRange(0);
+        gamePacket.setBehaviorPackLocked(false);
+        gamePacket.setResourcePackLocked(false);
+        gamePacket.setFromLockedWorldTemplate(false);
+        gamePacket.setUsingMsaGamertagsOnly(false);
+        gamePacket.setFromWorldTemplate(false);
+        gamePacket.setWorldTemplateOptionLocked(false);
+        gamePacket.setOnlySpawningV1Villagers(false);
+        gamePacket.setDisablingPersonas(false);
+        gamePacket.setDisablingCustomSkins(false);
+        gamePacket.setEmoteChatMuted(true);
+        gamePacket.setVanillaVersion("1.20.41");
+        gamePacket.setLimitedWorldWidth(0);
+        gamePacket.setLimitedWorldHeight(0);
+        gamePacket.setNetherType(true);
+        gamePacket.setEduSharedUriResource(EduSharedUriResource.EMPTY);
+        gamePacket.setForceExperimentalGameplay(OptionalBoolean.empty());
+        gamePacket.setLevelId("MA=="); // 0 in Base64
+        gamePacket.setLevelName(config.getString("server.name", "Droplet"));
+        gamePacket.setPremiumWorldTemplateId(UUID.randomUUID().toString());
+        gamePacket.setWorldTemplateId(UUID.randomUUID());
+        gamePacket.setTrial(false);
+        gamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.CLIENT);
+        gamePacket.setCurrentTick(0L);
+        gamePacket.setEnchantmentSeed(0);
         // TODO: Send custom blocks to the client.
-        packet.setBlockPalette(new NbtList<>(NbtType.COMPOUND, NbtMap.EMPTY));
-        // TODO: Send vanilla items to the client.
+        gamePacket.setBlockPalette(new NbtList<>(NbtType.COMPOUND, NbtMap.EMPTY));
         // TODO: Send custom items to the client.
-        packet.setItemDefinitions(List.of());
-        packet.setMultiplayerCorrelationId(UUID.randomUUID().toString());
-        packet.setInventoriesServerAuthoritative(false);
+        gamePacket.setItemDefinitions(server.getItemManager().getDefinitionsList());
+        gamePacket.setMultiplayerCorrelationId(UUID.randomUUID().toString());
+        gamePacket.setInventoriesServerAuthoritative(false);
         // setGameVersion
         // TODO: Send player entity properties.
-        packet.setPlayerPropertyData(NbtMap.EMPTY);
-        packet.setBlockRegistryChecksum(0);
-        packet.setClientSideGenerationEnabled(false);
-        packet.setWorldTemplateId(UUID.randomUUID());
-        packet.setChatRestrictionLevel(ChatRestrictionLevel.NONE);
-        packet.setDisablingPlayerInteractions(false);
-        packet.setBlockNetworkIdsHashed(false);
+        gamePacket.setPlayerPropertyData(NbtMap.EMPTY);
+        gamePacket.setBlockRegistryChecksum(0);
+        gamePacket.setClientSideGenerationEnabled(false);
+        gamePacket.setWorldTemplateId(UUID.randomUUID());
+        gamePacket.setChatRestrictionLevel(ChatRestrictionLevel.NONE);
+        gamePacket.setDisablingPlayerInteractions(false);
+        gamePacket.setBlockNetworkIdsHashed(false);
         // setServerAuthoritativeSound
-        packet.setServerEngine("Droplet");
+        gamePacket.setServerEngine("Droplet");
 
-        return packet;
+        return List.of(gamePacket);
     }
 
     @Override
-    public Packet toJava() {
+    public Collection<Packet> toJava() {
         var server = Server.getInstance();
         var config = server.getConfig();
 
-        return new ClientboundLoginPacket(
+        return List.of(new ClientboundLoginPacket(
                 this.entityId,
                 this.isHardcore,
                 new String[] {"minecraft:world"}, // World Names
@@ -152,6 +152,6 @@ public final class DropletStartGamePacket extends BasePacket {
                         null, // Last death position
                         0 // Portal cooldown
                 )
-        );
+        ));
     }
 }
