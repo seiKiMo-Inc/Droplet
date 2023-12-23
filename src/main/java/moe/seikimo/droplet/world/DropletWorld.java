@@ -27,6 +27,11 @@ public final class DropletWorld implements World {
     }
 
     @Override
+    public Chunk getChunkAt(int x, int z) {
+        return this.getChunks().get(EncodingUtils.convert(x, z));
+    }
+
+    @Override
     public long getNextEntityId() {
         return this.nextEntityId++;
     }

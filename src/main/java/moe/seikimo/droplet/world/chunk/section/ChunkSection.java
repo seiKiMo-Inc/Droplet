@@ -1,5 +1,6 @@
 package moe.seikimo.droplet.world.chunk.section;
 
+import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import moe.seikimo.droplet.block.Block;
 
@@ -8,11 +9,6 @@ public interface ChunkSection {
      * @return The X coordinate of this chunk section.
      */
     int getY();
-
-    /**
-     * @return The block palette. (index -> block state)
-     */
-    Int2IntMap getPalette();
 
     /**
      * Gets a block in the section at the coordinates.
@@ -34,4 +30,14 @@ public interface ChunkSection {
      * @param paletteIndex The index of the block in the palette.
      */
     void setBlockAt(int x, int y, int z, int paletteIndex);
+
+    /**
+     * @return The encoded chunk section.
+     */
+    ByteBuf encodeBedrock();
+
+    /**
+     * @return The encoded chunk section.
+     */
+    byte[] encodeJava();
 }

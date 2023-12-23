@@ -24,6 +24,15 @@ public interface World {
     Map<ChunkPos, Chunk> getChunks();
 
     /**
+     * Gets a chunk at the given coordinates.
+     *
+     * @param x The X coordinate.
+     * @param z The Z coordinate.
+     * @return The chunk at the given coordinates.
+     */
+    Chunk getChunkAt(int x, int z);
+
+    /**
      * Adds a chunk to the world.
      *
      * @param chunk The chunk to add.

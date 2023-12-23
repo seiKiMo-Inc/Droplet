@@ -1,6 +1,6 @@
 package moe.seikimo.droplet.world.chunk;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import moe.seikimo.droplet.entity.Entity;
 import moe.seikimo.droplet.world.chunk.section.ChunkSection;
@@ -50,4 +50,14 @@ public interface Chunk {
      * @param entity The entity to add.
      */
     void addEntity(Entity entity);
+
+    /**
+     * @return The chunk encoded for the Bedrock format.
+     */
+    ByteBuf encodeBedrock();
+
+    /**
+     * @return The chunk encoded for the Java format.
+     */
+    byte[] encodeJava();
 }
