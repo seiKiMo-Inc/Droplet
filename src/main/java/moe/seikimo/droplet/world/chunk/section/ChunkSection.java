@@ -1,7 +1,7 @@
 package moe.seikimo.droplet.world.chunk.section;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import moe.seikimo.droplet.world.block.Block;
+import moe.seikimo.droplet.block.Block;
 
 public interface ChunkSection {
     /**

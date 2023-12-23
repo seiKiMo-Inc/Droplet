@@ -1,4 +1,4 @@
-package moe.seikimo.droplet.world.block;
+package moe.seikimo.droplet.block;
 
 public final class DropletBlock implements Block {
     /**

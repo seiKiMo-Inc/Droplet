@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.utils.EncodingUtils;
-import moe.seikimo.droplet.world.block.Block;
-import moe.seikimo.droplet.world.block.DropletBlock;
+import moe.seikimo.droplet.block.Block;
+import moe.seikimo.droplet.block.DropletBlock;
 
 @Getter
 @RequiredArgsConstructor
