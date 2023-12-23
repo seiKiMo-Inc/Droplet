@@ -4,7 +4,14 @@ import com.google.gson.Gson;
 import moe.seikimo.droplet.world.WorldFormat;
 import moe.seikimo.droplet.world.WorldFormat.ChunkPos;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.nbt.NBTInputStream;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Base64;
 
 public interface EncodingUtils {
@@ -30,6 +37,20 @@ public interface EncodingUtils {
     static <T> T base64Decode(String base64, Class<T> type) {
         return EncodingUtils.GSON.fromJson(new String(
                 EncodingUtils.base64Decode(base64)), type);
+    }
+
+    /**
+     * Decodes the bytes of an NBT into a Java object.
+     *
+     * @param nbt The NBT bytes to decode.
+     * @return The decoded Java object.
+     */
+    static NbtMap nbtDecode(byte[] nbt) {
+        try (var stream = NbtUtils.createReaderLE(new ByteArrayInputStream(nbt))) {
+            return (NbtMap) stream.readTag();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
@@ -81,5 +102,16 @@ public interface EncodingUtils {
      */
     static int getIndex(int x, int y, int z) {
         return ((x << 8) + (z << 4)) | y;
+    }
+
+    /**
+     * Decodes a JSON string into a Java object.
+     *
+     * @param stream The input stream to read the JSON from.
+     * @param type The type of the Java object.
+     * @return The decoded Java object.
+     */
+    static <T> T jsonDecode(InputStream stream, Class<T> type) {
+        return EncodingUtils.GSON.fromJson(new InputStreamReader(stream), type);
     }
 }
