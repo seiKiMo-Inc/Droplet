@@ -8,7 +8,7 @@ import moe.seikimo.droplet.utils.Log;
 import org.slf4j.Logger;
 
 public abstract class NetworkSession {
-    private static int nextId = 0;
+    private static int nextId = 1;
 
     @Getter private final Logger logger
             = Log.newLogger("Network Session #" + nextId++);
