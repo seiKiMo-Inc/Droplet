@@ -1,6 +1,7 @@
 package moe.seikimo.droplet;
 
 import lombok.Getter;
+import moe.seikimo.droplet.utils.Log;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -36,6 +37,8 @@ public final class Droplet {
 
         // Start the game server.
         Server.getInstance().start();
+        // Set the debug logger.
+        Log.setDebug(Droplet.getLogger());
 
         Droplet.getLogger().info("Done! Droplet started in {}ms.",
                 System.currentTimeMillis() - Droplet.startTime);

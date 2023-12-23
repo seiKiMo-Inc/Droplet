@@ -7,6 +7,7 @@ import moe.seikimo.droplet.item.ItemManager;
 import moe.seikimo.droplet.network.NetworkManager;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.java.JavaInterface;
+import moe.seikimo.droplet.utils.Log;
 import moe.seikimo.droplet.utils.objects.Config;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.biome.Biome;
@@ -33,6 +34,7 @@ public final class Server {
     }
 
     @Getter private static Server instance;
+    @Getter private static boolean isDebug = false;
 
     @Getter private final Logger logger
             = LoggerFactory.getLogger("Server");
@@ -58,6 +60,10 @@ public final class Server {
         if (this.config == null) {
             throw new RuntimeException("No configuration detected.");
         }
+
+        // Set the debug mode.
+        Server.isDebug = this.config.getBoolean("server.debug", false);
+        Log.setDebug(this.getLogger());
 
         // Register network interfaces.
         this.networkManager.registerInterface(new BedrockInterface(this));
