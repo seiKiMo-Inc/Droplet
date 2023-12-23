@@ -2,6 +2,8 @@ package moe.seikimo.droplet.data;
 
 import com.google.gson.Gson;
 import lombok.Getter;
+import moe.seikimo.droplet.data.world.BlockPaletteGenerator;
+import moe.seikimo.droplet.data.world.DebugFileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +20,10 @@ public final class DataGenerator {
             = LoggerFactory.getLogger("Data Generator");
 
     public static void main(String[] args) {
+        // Dump data.
+        BlockPaletteGenerator.generate();
+        DebugFileGenerator.generate();
+
         DataGenerator.getLogger().info("Data generation finished in {}ms.",
                 System.currentTimeMillis() - DataGenerator.getStartTime());
     }

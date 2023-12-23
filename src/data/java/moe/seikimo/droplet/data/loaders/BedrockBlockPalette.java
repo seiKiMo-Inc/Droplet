@@ -6,6 +6,7 @@ import lombok.Getter;
 import moe.seikimo.droplet.data.Constants;
 import moe.seikimo.droplet.data.Stream;
 import moe.seikimo.droplet.data.types.BedrockBlock;
+import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.slf4j.Logger;
@@ -32,12 +33,12 @@ public final class BedrockBlockPalette {
 
         try {
             var paletteStream = Stream.nbt(Constants.BEDROCK_BLOCK_PALETTE);
-            var palette = paletteStream.readValue(NbtType.COMPOUND);
+            var nbt = (NbtMap) paletteStream.readTag();
+            var palette = (NbtList<NbtMap>) nbt.getList("blocks", NbtType.COMPOUND);
 
-            for (var entry : palette.entrySet()) {
-                var runtimeId = Integer.parseInt(entry.getKey());
-                var block = BedrockBlock.fromNbt((NbtMap) entry.getValue());
-                this.getBlocks().put(runtimeId, block);
+            for (var i = 0; i < palette.size(); i++) {
+                var block = BedrockBlock.fromNbt(palette.get(i));
+                this.blocks.put(i, block);
             }
 
             paletteStream.close();

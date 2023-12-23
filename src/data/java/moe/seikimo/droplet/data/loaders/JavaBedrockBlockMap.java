@@ -44,6 +44,8 @@ public final class JavaBedrockBlockMap {
                 this.javaToBedrockMap.put(javaBlock, bedrockBlock);
                 this.bedrockToJavaMap.put(bedrockBlock, javaBlock);
             }
+
+            logger.info("Read {} mappings from file.", this.getJavaToBedrockMap().size());
         } catch (Exception exception) {
             logger.warn("Unable to read Java -> Bedrock block mappings.", exception);
         }
