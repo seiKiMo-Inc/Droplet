@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLo
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
+import moe.seikimo.droplet.network.ProtocolInfo;
 import moe.seikimo.droplet.network.shared.BasePacket;
 import moe.seikimo.droplet.utils.enums.Dimension;
 import org.cloudburstmc.math.vector.Vector2f;
@@ -79,7 +80,7 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setExperimentsPreviouslyToggled(true);
         gamePacket.setBonusChestEnabled(false);
         gamePacket.setStartingWithMap(false);
-        gamePacket.setDefaultPlayerPermission(PlayerPermission.CUSTOM);
+        gamePacket.setDefaultPlayerPermission(PlayerPermission.MEMBER);
         gamePacket.setServerChunkTickRange(0);
         gamePacket.setBehaviorPackLocked(false);
         gamePacket.setResourcePackLocked(false);
@@ -91,7 +92,7 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setDisablingPersonas(false);
         gamePacket.setDisablingCustomSkins(false);
         gamePacket.setEmoteChatMuted(true);
-        gamePacket.setVanillaVersion("1.20.41");
+        gamePacket.setVanillaVersion(ProtocolInfo.BEDROCK_CODEC.getMinecraftVersion());
         gamePacket.setLimitedWorldWidth(0);
         gamePacket.setLimitedWorldHeight(0);
         gamePacket.setNetherType(true);
@@ -102,7 +103,7 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setPremiumWorldTemplateId(UUID.randomUUID().toString());
         gamePacket.setWorldTemplateId(UUID.randomUUID());
         gamePacket.setTrial(false);
-        gamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.CLIENT);
+        gamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.SERVER_WITH_REWIND);
         gamePacket.setCurrentTick(0L);
         gamePacket.setEnchantmentSeed(0);
         // TODO: Send custom blocks to the client.
@@ -110,7 +111,7 @@ public final class DropletStartGamePacket extends BasePacket {
         // TODO: Send custom items to the client.
         gamePacket.setItemDefinitions(server.getItemManager().getDefinitionsList());
         gamePacket.setMultiplayerCorrelationId(UUID.randomUUID().toString());
-        gamePacket.setInventoriesServerAuthoritative(false);
+        gamePacket.setInventoriesServerAuthoritative(true);
         // setGameVersion
         // TODO: Send player entity properties.
         gamePacket.setPlayerPropertyData(NbtMap.EMPTY);
