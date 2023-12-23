@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_package = "moe.seikimo.droplet.world";
+
+message World {
+  string name = 1;
+  int64 seed = 2;
+  repeated Chunk chunks = 3;
+}
+
+message Chunk {
+  int32 x = 1;
+  int32 z = 2;
+  repeated Section sections = 3;
+  repeated Entity entities = 4;
+}
+
+message Section {
+  int32 y = 1;
+  repeated Block blocks = 2;
+}
+
+message Block {
+  int32 position = 1;
+  uint32 state = 2;
+  bytes nbt = 3;
+}
+
+message Entity {
+  int32 position = 1;
+  uint32 id = 2;
+  bytes nbt = 3;
+}
+
+message ChunkPos {
+  int32 x = 1;
+  int32 z = 2;
+}
