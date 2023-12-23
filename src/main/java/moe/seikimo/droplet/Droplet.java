@@ -26,6 +26,8 @@ public final class Droplet {
     }
 
     public static void main(String[] args) {
+        Droplet.getLogger().info("Starting Droplet...");
+
         // Initialize the game server.
         Server.initialize();
 

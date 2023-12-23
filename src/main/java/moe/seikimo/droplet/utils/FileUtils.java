@@ -10,6 +10,7 @@ public interface FileUtils {
      * @return The resource.
      */
     static InputStream resource(String path) {
-        return FileUtils.class.getClassLoader().getResourceAsStream(path);
+        return FileUtils.class.getClassLoader()
+                .getResourceAsStream(path);
     }
 }
