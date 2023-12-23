@@ -32,7 +32,7 @@ public record MinecraftBlock(
                 }
             }
         }
-wa
+
         return new MinecraftBlock(name, map);
     }
 
