@@ -53,6 +53,8 @@ public final class DropletStartGamePacket extends BasePacket {
         packet.setCustomBiomeName("plains");
         packet.setDimensionId(this.dimension.getId());
         packet.setGeneratorId(0);
+        packet.setLevelGameType(GameType.SURVIVAL);
+        packet.setDifficulty(1);
         packet.setDefaultSpawn(Vector3i.ZERO);
         packet.setAchievementsDisabled(false);
         // setEditorWorldType
@@ -96,6 +98,7 @@ public final class DropletStartGamePacket extends BasePacket {
         packet.setForceExperimentalGameplay(OptionalBoolean.empty());
         packet.setLevelId("MA=="); // 0 in Base64
         packet.setLevelName(config.getString("server.name", "Droplet"));
+        packet.setPremiumWorldTemplateId(UUID.randomUUID().toString());
         packet.setWorldTemplateId(UUID.randomUUID());
         packet.setTrial(false);
         packet.setAuthoritativeMovementMode(AuthoritativeMovementMode.CLIENT);
@@ -118,6 +121,7 @@ public final class DropletStartGamePacket extends BasePacket {
         packet.setDisablingPlayerInteractions(false);
         packet.setBlockNetworkIdsHashed(false);
         // setServerAuthoritativeSound
+        packet.setServerEngine("Droplet");
 
         return packet;
     }
