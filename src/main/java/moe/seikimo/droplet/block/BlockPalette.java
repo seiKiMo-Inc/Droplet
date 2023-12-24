@@ -25,6 +25,8 @@ public final class BlockPalette {
 
     @Getter private static final Int2ObjectMap<BlockState>
             palette = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Map<MinecraftBlock, Integer>
+            javaBlockMap = new HashMap<>();
 
     @Getter private static final Map<String, Integer> bedrockBlockMap = new HashMap<>();
     @Getter private static DefinitionRegistry<SimpleBlockDefinition> bedrockRegistry;
@@ -55,12 +57,16 @@ public final class BlockPalette {
                 var javaIdentifier = blockData.getString("jname");
                 var bedrockIdentifier = blockData.getString("bname");
 
+                // Create data holders for the block.
                 var blockState = new BlockState(bedrockId,
                         javaState, bedrockState,
                         javaIdentifier, bedrockIdentifier);
+                var minecraftBlock = MinecraftBlock.fromNbt(
+                        javaIdentifier, javaState);
 
                 // Add mappings for the Droplet ID.
                 BlockPalette.palette.put(id, blockState);
+                BlockPalette.javaBlockMap.put(minecraftBlock, id);
                 // Note the block identifier.
                 BlockPalette.bedrockBlockMap.put(bedrockIdentifier, bedrockId);
 
