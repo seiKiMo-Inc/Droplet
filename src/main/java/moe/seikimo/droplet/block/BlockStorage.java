@@ -11,7 +11,7 @@ import moe.seikimo.droplet.world.chunk.section.DropletChunkSection;
 import java.util.Arrays;
 
 @Getter
-// Taken from GesyserMC's BlockStorage.java
+// Taken from GeyserMC's BlockStorage.java
 public final class BlockStorage {
     private static final int SIZE = 4096;
 
