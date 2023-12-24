@@ -3,7 +3,7 @@ package moe.seikimo.droplet.data.loaders;
 import lombok.Getter;
 import moe.seikimo.droplet.data.Constants;
 import moe.seikimo.droplet.data.Stream;
-import moe.seikimo.droplet.data.types.MinecraftBlock;
+import moe.seikimo.droplet.block.MinecraftBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

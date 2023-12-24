@@ -6,7 +6,7 @@ import moe.seikimo.droplet.data.Stream;
 import moe.seikimo.droplet.data.loaders.BedrockBlockPalette;
 import moe.seikimo.droplet.data.loaders.JavaBedrockBlockMap;
 import moe.seikimo.droplet.data.loaders.MinecraftBlockMap;
-import moe.seikimo.droplet.data.types.MinecraftBlock;
+import moe.seikimo.droplet.block.MinecraftBlock;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.slf4j.Logger;

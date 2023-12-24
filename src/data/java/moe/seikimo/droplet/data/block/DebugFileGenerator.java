@@ -4,7 +4,7 @@ import lombok.Getter;
 import moe.seikimo.droplet.data.Constants;
 import moe.seikimo.droplet.data.loaders.BedrockBlockPalette;
 import moe.seikimo.droplet.data.loaders.JavaBedrockBlockMap;
-import moe.seikimo.droplet.data.types.MinecraftBlock;
+import moe.seikimo.droplet.block.MinecraftBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

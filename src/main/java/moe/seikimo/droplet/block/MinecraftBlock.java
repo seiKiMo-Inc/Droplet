@@ -1,6 +1,7 @@
-package moe.seikimo.droplet.data.types;
+package moe.seikimo.droplet.block;
 
 import com.google.gson.JsonObject;
+import moe.seikimo.droplet.data.types.BedrockBlock;
 import org.cloudburstmc.nbt.NbtMap;
 
 import java.util.HashMap;
@@ -63,6 +64,21 @@ public record MinecraftBlock(
         state.entrySet().forEach(entry ->
                 properties.put(entry.getKey(),
                         propertyParser(entry.getValue().getAsString())));
+
+        return new MinecraftBlock(identifier, properties);
+    }
+
+    /**
+     * Converts a string and properties to a MinecraftBlock.
+     *
+     * @param identifier The identifier.
+     * @param state The state.
+     * @return The MinecraftBlock.
+     */
+    public static MinecraftBlock fromNbt(String identifier, NbtMap state) {
+        var properties = new HashMap<String, String>();
+        state.forEach((key, value) -> properties.put(key,
+                propertyParser((String) value)));
 
         return new MinecraftBlock(identifier, properties);
     }
