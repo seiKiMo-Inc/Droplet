@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.block.BlockPalette;
@@ -13,7 +14,6 @@ import moe.seikimo.droplet.block.Block;
 import moe.seikimo.droplet.block.DropletBlock;
 import moe.seikimo.droplet.utils.objects.binary.BitArray;
 import moe.seikimo.droplet.utils.objects.binary.BitArrayVersion;
-import moe.seikimo.droplet.world.chunk.DropletChunk;
 
 import java.util.Arrays;
 
@@ -36,9 +36,8 @@ public final class DropletChunkSection implements ChunkSection {
 
     private final int y;
 
-    private final Int2IntMap
-            palette = new Int2IntArrayMap(),
-            blockStates = new Int2IntArrayMap();
+    private final IntList palette = new IntArrayList();
+    private final Int2IntMap blockStates = new Int2IntArrayMap();
 
     @Override
     public Block getBlockAt(int x, int y, int z) {
@@ -66,10 +65,11 @@ public final class DropletChunkSection implements ChunkSection {
 
             // Convert the palette from Droplet to Bedrock.
             var blockPalette = BlockPalette.getPalette();
-            this.getPalette().forEach((paletteIndex, dropletId) -> {
-                var blockState = blockPalette.get((int) dropletId);
+            this.getPalette().forEach(dropletId -> {
+                var paletteIndex = bedrockPalette.indexOf(dropletId);
+                var blockState = blockPalette.get(dropletId);
                 if (blockState != null) {
-                    bedrockPalette.set((int) paletteIndex, blockState.getBedrockRuntimeId());
+                    bedrockPalette.set(paletteIndex, blockState.getBedrockRuntimeId());
                     this.checkResize(paletteIndex, bitArray);
                 }
             });

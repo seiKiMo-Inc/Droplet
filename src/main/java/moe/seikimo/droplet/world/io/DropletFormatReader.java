@@ -34,12 +34,18 @@ public final class DropletFormatReader implements WorldReader {
                 var section = new DropletChunkSection(sectionData.getY());
 
                 sectionData.getBlocksList().forEach(blockData -> {
+                    // Check palette index.
+                    var palette = section.getPalette();
+                    if (!palette.contains(blockData.getState())) {
+                        palette.add(blockData.getState());
+                    }
+
                     var blockPosition = EncodingUtils.decodePosition(blockData.getPosition());
                     section.setBlockAt(
                             blockPosition.getX(),
                             blockPosition.getY(),
                             blockPosition.getZ(),
-                            blockData.getState());
+                            palette.indexOf(blockData.getState()));
                 });
 
                 chunk.setSection(sectionData.getY(), section);
