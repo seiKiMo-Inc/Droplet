@@ -17,7 +17,7 @@ public class DropletPlayer extends DropletLivingEntity implements Player {
     @NonNull @Setter
     private World world;
 
-    @Setter private boolean isSpawned = false;
+    @Setter private boolean spawned = false;
     @Setter private int renderDistance = 16;
 
     public DropletPlayer(

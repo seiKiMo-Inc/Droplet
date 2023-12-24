@@ -3,10 +3,12 @@ package moe.seikimo.droplet.network.bedrock;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.network.shared.BasePacket;
 import moe.seikimo.droplet.player.Player;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +35,17 @@ public final class BedrockNetworkSession extends NetworkSession {
 
     @Override
     public void sendPacket(BasePacket packet) {
-        packet.toBedrock().forEach(this.getHandle()::sendPacket);
+        packet.toBedrock().forEach(this::sendPacket);
+    }
+
+    @Override
+    public void sendPacket(BedrockPacket... packets) {
+        for (var packet : packets) {
+            this.getHandle().sendPacketImmediately(packet);
+
+            if (Server.getInstance().isLogPackets()) {
+                this.getLogger().debug("Sent packet: {}", packet.getClass().getSimpleName());
+            }
+        }
     }
 }

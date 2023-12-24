@@ -1,6 +1,7 @@
 package moe.seikimo.droplet.network.java;
 
 import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.network.NetworkSession;
@@ -31,5 +32,12 @@ public final class JavaNetworkSession extends NetworkSession implements DataRece
     @Override
     public void sendPacket(BasePacket packet) {
         packet.toJava().forEach(this.getHandle()::send);
+    }
+
+    @Override
+    public void sendPacket(Packet... packets) {
+        for (var packet : packets) {
+            this.getHandle().send(packet);
+        }
     }
 }

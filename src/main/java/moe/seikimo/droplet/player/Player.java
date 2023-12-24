@@ -27,6 +27,13 @@ public interface Player extends LivingEntity {
     boolean isSpawned();
 
     /**
+     * Sets whether the player is spawned.
+     *
+     * @param spawned Whether the player is spawned.
+     */
+    void setSpawned(boolean spawned);
+
+    /**
      * @return The player's render distance.
      */
     int getRenderDistance();
