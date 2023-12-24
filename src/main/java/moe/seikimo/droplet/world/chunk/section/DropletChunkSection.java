@@ -27,7 +27,7 @@ public final class DropletChunkSection implements ChunkSection {
      * Encodes the palette header.
      *
      * @param version The bit array version.
-     * @param isRuntime Whether or not this is a runtime palette.
+     * @param isRuntime Whether this is a runtime palette.
      * @return The palette header.
      */
     public static int encodeHeader(BitArrayVersion version, boolean isRuntime) {

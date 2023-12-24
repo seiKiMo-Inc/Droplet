@@ -35,4 +35,15 @@ public interface Preconditions {
             throw new IllegalArgumentException("File " + file.getAbsolutePath() + " is a directory.");
         }
     }
+
+    /**
+     * Checks if the given file is a directory.
+     *
+     * @param file The file to check.
+     */
+    static void isDirectory(File file) {
+        if (!file.isDirectory()) {
+            throw new IllegalArgumentException("File " + file.getAbsolutePath() + " is not a directory.");
+        }
+    }
 }

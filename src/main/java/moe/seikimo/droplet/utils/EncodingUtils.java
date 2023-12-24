@@ -8,10 +8,7 @@ import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Base64;
 
 public interface EncodingUtils {
@@ -48,6 +45,20 @@ public interface EncodingUtils {
     static NbtMap nbtDecode(byte[] nbt) {
         try (var stream = NbtUtils.createReaderLE(new ByteArrayInputStream(nbt))) {
             return (NbtMap) stream.readTag();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * Decodes the bytes of an NBT into a Java object.
+     *
+     * @param stream The stream containing NBT data.
+     * @return The decoded Java object.
+     */
+    static NbtMap nbtDecode(DataInputStream stream) {
+        try (var nbtStream = new NBTInputStream(stream)) {
+            return (NbtMap) nbtStream.readTag();
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
@@ -105,6 +116,18 @@ public interface EncodingUtils {
     }
 
     /**
+     * Compresses an X, Y, Z coordinate into a single index.
+     *
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     * @return The index.
+     */
+    static int anvilIndex(int x, int y, int z) {
+        return y * 16 * 16 + z * 16 + x;
+    }
+
+    /**
      * Decodes a JSON string into a Java object.
      *
      * @param stream The input stream to read the JSON from.
@@ -113,5 +136,15 @@ public interface EncodingUtils {
      */
     static <T> T jsonDecode(InputStream stream, Class<T> type) {
         return EncodingUtils.GSON.fromJson(new InputStreamReader(stream), type);
+    }
+
+    /**
+     * Calculates the length of the integer's bits.
+     *
+     * @param value The integer.
+     * @return The length of the integer's bits.
+     */
+    static int bitLength(int value) {
+        return Integer.highestOneBit(value) * 2 - 1;
     }
 }

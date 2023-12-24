@@ -11,7 +11,7 @@ import moe.seikimo.droplet.utils.Log;
 import moe.seikimo.droplet.utils.objects.Config;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.biome.Biome;
-import moe.seikimo.droplet.world.io.DropletFormatReader;
+import moe.seikimo.droplet.world.io.AnvilFormatReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,11 +82,14 @@ public final class Server {
      */
     public void loadDefaultWorld() {
         try {
-            this.getLogger().info("Preparing world {}...",
-                    this.getDefaultWorld().getName());
+            // this.getLogger().info("Preparing world {}...",
+            //         this.getDefaultWorld().getName());
 
-            var worldReader = new DropletFormatReader();
-            this.setDefaultWorld(worldReader.read(new File("world.droplet")));
+            // var worldReader = new DropletFormatReader();
+            // this.setDefaultWorld(worldReader.read(new File("world.droplet")));
+
+            var reader = new AnvilFormatReader();
+            this.setDefaultWorld(reader.read(new File("worlds/world")));
         } catch (IOException exception) {
             this.getLogger().error("Failed to read default world file.", exception);
             System.exit(1);
