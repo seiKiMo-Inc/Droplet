@@ -52,8 +52,8 @@ public final class BlockPalette {
                 var bedrockId = blockData.getInt("bid");
                 var javaState = blockData.getCompound("jstates");
                 var bedrockState = blockData.getCompound("bstates");
-                var javaIdentifier = javaState.getString("jname");
-                var bedrockIdentifier = bedrockState.getString("bname");
+                var javaIdentifier = blockData.getString("jname");
+                var bedrockIdentifier = blockData.getString("bname");
 
                 var blockState = new BlockState(bedrockId,
                         javaState, bedrockState,
