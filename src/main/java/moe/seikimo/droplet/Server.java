@@ -52,6 +52,8 @@ public final class Server {
     @Getter @Setter private short bedrockPort = 19132;
     @Getter @Setter private short javaPort = 25565;
 
+    @Getter @Setter private boolean logPackets = false;
+
     /**
      * Starts the server.
      */
@@ -65,6 +67,8 @@ public final class Server {
         Server.isDebug = this.config.getBoolean("server.debug", false);
         Log.setDebug(this.getLogger());
 
+        // Enable packet logging.
+        this.setLogPackets(this.config.getBoolean("server.log_packets", false));
         // Register network interfaces.
         this.networkManager.registerInterface(new BedrockInterface(this));
         this.networkManager.registerInterface(new JavaInterface(this));
@@ -78,11 +82,11 @@ public final class Server {
      */
     public void loadDefaultWorld() {
         try {
-            var worldReader = new DropletFormatReader();
-            this.setDefaultWorld(worldReader.read(new File("world.droplet")));
-
             this.getLogger().info("Preparing world {}...",
                     this.getDefaultWorld().getName());
+
+            var worldReader = new DropletFormatReader();
+            this.setDefaultWorld(worldReader.read(new File("world.droplet")));
         } catch (IOException exception) {
             this.getLogger().error("Failed to read default world file.", exception);
             System.exit(1);

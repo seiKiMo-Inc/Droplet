@@ -21,10 +21,12 @@ public final class Config {
      */
     public static Config read(File file) {
         // Check if the file exists.
-        if (!file.exists()) return null;
+        if (!file.exists()) {
+            return new Config();
+        }
 
         var parts = file.getName().split("\\.");
-        if (parts.length == 1) return null;
+        if (parts.length == 1) return new Config();
 
         return switch (parts[parts.length - 1]) {
             default -> throw new IllegalArgumentException(file.getName() + " is not a valid configuration.");
