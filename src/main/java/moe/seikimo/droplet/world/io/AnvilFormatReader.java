@@ -6,7 +6,7 @@ import moe.seikimo.droplet.utils.EncodingUtils;
 import moe.seikimo.droplet.utils.FileUtils;
 import moe.seikimo.droplet.utils.Log;
 import moe.seikimo.droplet.utils.Preconditions;
-import moe.seikimo.droplet.utils.objects.binary.BitArrayVersion;
+import moe.seikimo.droplet.utils.objects.binary.SimpleBitArray;
 import moe.seikimo.droplet.world.DropletWorld;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.chunk.Chunk;
@@ -64,12 +64,10 @@ public final class AnvilFormatReader implements WorldReader {
     /**
      * Reads a region from the world.
      *
-     * @param world The world.
+     * @param world  The world.
      * @param region The region.
-     * @throws Exception If there is an error with reading the region.
      */
-    private void readRegion(World world, RegionFile region)
-            throws Exception {
+    private void readRegion(World world, RegionFile region) {
         for (var x = 0; x < 32; x++) {
             for (var z = 0; z < 32; z++) {
                 // Skip the chunk if it is not present.
@@ -104,7 +102,7 @@ public final class AnvilFormatReader implements WorldReader {
     /**
      * Reads a section from the world.
      *
-     * @param chunk The owning chunk.
+     * @param chunk   The owning chunk.
      * @param section The section.
      */
     private void readSection(Chunk chunk, NbtMap section) {
@@ -114,7 +112,6 @@ public final class AnvilFormatReader implements WorldReader {
         // Read blocks in the section.
         var blockStates = section.getCompound("block_states");
         var palette = blockStates.getList("palette", NbtType.COMPOUND);
-        var bits = Math.max(EncodingUtils.bitLength(palette.size() - 1), 4);
 
         // Encode the palette for Droplet's global palette.
         for (var paletteEntry : palette) {
@@ -125,7 +122,7 @@ public final class AnvilFormatReader implements WorldReader {
             var block = MinecraftBlock.fromNbt(blockName, blockProperties);
             var paletteIndex = BlockPalette.getJavaBlockMap().get(block);
             if (paletteIndex == null) {
-                this.logger.warn("Block {} has no Droplet mapping.", block);
+                this.logger.trace("Block {} has no Droplet mapping.", block);
                 continue;
             }
 
@@ -135,12 +132,16 @@ public final class AnvilFormatReader implements WorldReader {
         // Read the block data.
         var data = blockStates.getLongArray("data");
         if (data != null && data.length == 256) {
+            // Calculate how many bits are required.
+            var bits = Math.max(EncodingUtils.bitLength(palette.size() - 1), 4);
+            var bitArray = new SimpleBitArray(bits, 4096, data);
+
             for (var x = 0; x < 16; x++) {
                 for (var y = 0; y < 16; y++) {
                     for (var z = 0; z < 16; z++) {
                         var index = EncodingUtils.anvilIndex(x, y, z);
-                        var blockIndex = getBlockIndex(index, bits, data);
-                        sectionInstance.setBlockAt(x, y, z, blockIndex);
+                        var paletteIndex = bitArray.get(index);
+                        sectionInstance.setBlockAt(x, y, z, paletteIndex);
                     }
                 }
             }
@@ -150,28 +151,5 @@ public final class AnvilFormatReader implements WorldReader {
 
         // Add the section to the chunk.
         chunk.setSection(sectionY, sectionInstance);
-    }
-
-    /**
-     * Gets the block index from the block data.
-     *
-     * @param index The index.
-     * @param bits The bits.
-     * @param data The data.
-     * @return The block index.
-     */
-    private static int getBlockIndex(int index, int bits, long[] data) {
-        var state = index / (64 / bits);
-        var bitData = data[state];
-
-        var d = 0L;
-        var modified = false;
-        if (bitData < 0) {
-            d = bitData;
-            modified = true;
-        }
-
-        var shiftedData = modified ? d : bitData >> (index % (64 / bits) * bits);
-        return (int) (shiftedData & ((1 << bits) - 1));
     }
 }

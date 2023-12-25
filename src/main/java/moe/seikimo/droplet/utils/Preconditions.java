@@ -46,4 +46,17 @@ public interface Preconditions {
             throw new IllegalArgumentException("File " + file.getAbsolutePath() + " is not a directory.");
         }
     }
+
+    /**
+     * Checks if the given number is within the bounds.
+     *
+     * @param min The minimum value.
+     * @param max The maximum value.
+     * @param value The value to check.
+     */
+    static void inclusive(long min, long max, long value) {
+        if (value < min || value > max) {
+            throw new IllegalArgumentException("Value " + value + " is not between " + min + " and " + max + ".");
+        }
+    }
 }

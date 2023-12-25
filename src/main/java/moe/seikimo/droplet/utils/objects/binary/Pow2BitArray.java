@@ -25,6 +25,7 @@
 
 package moe.seikimo.droplet.utils.objects.binary;
 
+import lombok.Getter;
 import org.cloudburstmc.protocol.common.util.Preconditions;
 
 import java.util.Arrays;
@@ -34,11 +35,12 @@ public class Pow2BitArray implements BitArray {
     /**
      * Array used to store data
      */
-    private final int[] words;
+    private final long[] words;
 
     /**
      * Palette version information
      */
+    @Getter
     private final BitArrayVersion version;
 
     /**
@@ -46,7 +48,7 @@ public class Pow2BitArray implements BitArray {
      */
     private final int size;
 
-    Pow2BitArray(BitArrayVersion version, int size, int[] words) {
+    Pow2BitArray(BitArrayVersion version, int size, long[] words) {
         this.size = size;
         this.version = version;
         this.words = words;
@@ -66,7 +68,7 @@ public class Pow2BitArray implements BitArray {
         int bitIndex = index * this.version.bits;
         int arrayIndex = bitIndex >> 5;
         int offset = bitIndex & 31;
-        this.words[arrayIndex] = this.words[arrayIndex] & ~(this.version.maxEntryValue << offset) | (value & this.version.maxEntryValue) << offset;
+        this.words[arrayIndex] = this.words[arrayIndex] & ~((long) this.version.maxEntryValue << offset) | (long) (value & this.version.maxEntryValue) << offset;
     }
 
     /**
@@ -77,7 +79,7 @@ public class Pow2BitArray implements BitArray {
         int bitIndex = index * this.version.bits;
         int arrayIndex = bitIndex >> 5;
         int wordOffset = bitIndex & 31;
-        return this.words[arrayIndex] >>> wordOffset & this.version.maxEntryValue;
+        return (int) (this.words[arrayIndex] >>> wordOffset & this.version.maxEntryValue);
     }
 
     /**
@@ -92,12 +94,8 @@ public class Pow2BitArray implements BitArray {
      * @return {@inheritDoc}
      */
     @Override
-    public int[] getWords() {
+    public long[] getWords() {
         return this.words;
-    }
-
-    public BitArrayVersion getVersion() {
-        return version;
     }
 
     @Override

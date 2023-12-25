@@ -34,7 +34,7 @@ public class PaddedBitArray implements BitArray {
     /**
      * Array used to store data
      */
-    private final int[] words;
+    private final long[] words;
 
     /**
      * Palette version information
@@ -46,7 +46,7 @@ public class PaddedBitArray implements BitArray {
      */
     private final int size;
 
-    PaddedBitArray(BitArrayVersion version, int size, int[] words) {
+    PaddedBitArray(BitArrayVersion version, int size, long[] words) {
         this.size = size;
         this.version = version;
         this.words = words;
@@ -64,7 +64,7 @@ public class PaddedBitArray implements BitArray {
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 
-        this.words[arrayIndex] = this.words[arrayIndex] & ~(this.version.maxEntryValue << offset) | (value & this.version.maxEntryValue) << offset;
+        this.words[arrayIndex] = this.words[arrayIndex] & ~((long) this.version.maxEntryValue << offset) | (long) (value & this.version.maxEntryValue) << offset;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PaddedBitArray implements BitArray {
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 
-        return (this.words[arrayIndex] >>> offset) & this.version.maxEntryValue;
+        return (int) (this.words[arrayIndex] >>> offset) & this.version.maxEntryValue;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class PaddedBitArray implements BitArray {
     }
 
     @Override
-    public int[] getWords() {
+    public long[] getWords() {
         return this.words;
     }
 

@@ -107,7 +107,7 @@ public final class BlockStorage {
         var palette = this.getPalette();
 
         buffer.writeByte(DropletChunkSection.encodeHeader(bitArray.getVersion(), true));
-        Arrays.stream(bitArray.getWords()).forEach(buffer::writeIntLE);
+        Arrays.stream(bitArray.getWords()).forEach(word -> buffer.writeIntLE((int) word));
         bitArray.writeSizeToNetwork(buffer, palette.size());
         palette.forEach(buffer::writeIntLE);
     }

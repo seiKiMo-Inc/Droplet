@@ -27,6 +27,7 @@ package moe.seikimo.droplet.utils.objects.binary;
 
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.IntArrays;
+import it.unimi.dsi.fastutil.longs.LongArrays;
 
 public class SingletonBitArray implements BitArray {
     public static final SingletonBitArray INSTANCE = new SingletonBitArray();
@@ -54,8 +55,8 @@ public class SingletonBitArray implements BitArray {
     }
 
     @Override
-    public int[] getWords() {
-        return IntArrays.EMPTY_ARRAY;
+    public long[] getWords() {
+        return LongArrays.EMPTY_ARRAY;
     }
 
     @Override

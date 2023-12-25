@@ -145,6 +145,6 @@ public interface EncodingUtils {
      * @return The length of the integer's bits.
      */
     static int bitLength(int value) {
-        return Integer.highestOneBit(value) * 2 - 1;
+        return (int) Math.ceil(Math.log(value) / Math.log(2));
     }
 }

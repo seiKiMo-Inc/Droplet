@@ -25,6 +25,8 @@
 
 package moe.seikimo.droplet.utils.objects.binary;
 
+import lombok.Getter;
+
 public enum BitArrayVersion {
     V16(16, 2, null),
     V8(8, 4, V16),
@@ -40,7 +42,7 @@ public enum BitArrayVersion {
 
     final byte bits;
     final byte entriesPerWord;
-    final int maxEntryValue;
+    @Getter final int maxEntryValue;
     final BitArrayVersion next;
 
     BitArrayVersion(int bits, int entriesPerWord, BitArrayVersion next) {
@@ -73,10 +75,6 @@ public enum BitArrayVersion {
         return bits;
     }
 
-    public int getMaxEntryValue() {
-        return maxEntryValue;
-    }
-
     public int getWordsForSize(int size) {
         return (int) Math.ceil((float) size / entriesPerWord);
     }
@@ -86,10 +84,10 @@ public enum BitArrayVersion {
     }
 
     public BitArray createArray(int size) {
-        return this.createArray(size, new int[(int) Math.ceil((float) size / entriesPerWord)]);
+        return this.createArray(size, new long[(int) Math.ceil((float) size / entriesPerWord)]);
     }
 
-    public BitArray createArray(int size, int[] words) {
+    public BitArray createArray(int size, long[] words) {
         if (this == V3 || this == V5 || this == V6) {
             // Padded palettes aren't able to use bitwise operations due to their padding.
             return new PaddedBitArray(this, size, words);
