@@ -1,4 +1,4 @@
-package moe.seikimo.droplet.world.chunk.section;
+package moe.seikimo.droplet.world.chunk;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import moe.seikimo.droplet.Droplet;
 import moe.seikimo.droplet.block.BlockPalette;
 import moe.seikimo.droplet.utils.EncodingUtils;
 import moe.seikimo.droplet.block.Block;
@@ -16,6 +17,7 @@ import moe.seikimo.droplet.utils.objects.binary.BitArray;
 import moe.seikimo.droplet.utils.objects.binary.BitArrayVersion;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Getter
 @RequiredArgsConstructor
@@ -42,7 +44,8 @@ public final class DropletChunkSection implements ChunkSection {
     @Override
     public Block getBlockAt(int x, int y, int z) {
         var index = EncodingUtils.getIndex(x, y, z);
-        var state = this.getBlockStates().get(index);
+        var paletteIndex = this.getBlockStates().get(index);
+        var state = this.getPalette().getInt(paletteIndex);
 
         return DropletBlock.fromState(state);
     }
@@ -57,29 +60,36 @@ public final class DropletChunkSection implements ChunkSection {
     public ByteBuf encodeBedrock() {
         var buffer = Unpooled.buffer();
 
+        buffer.writeByte(SECTION_VERSION); // Version.
+        buffer.writeByte(1); // Block storage count.
         buffer.writeByte(this.getY()); // Layer number.
 
         {
             var bedrockPalette = new IntArrayList();
+            bedrockPalette.addAll(Collections.nCopies(
+                    this.getPalette().size(), 0));
+
             var bitArray = BitArrayVersion.V2.createArray(PALETTE_SIZE);
 
             // Convert the palette from Droplet to Bedrock.
             var blockPalette = BlockPalette.getPalette();
-            this.getPalette().forEach(dropletId -> {
-                var paletteIndex = bedrockPalette.indexOf(dropletId);
+            for (int dropletId : this.getPalette()) {
+                var paletteIndex = this.getPalette().indexOf(dropletId);
                 var blockState = blockPalette.get(dropletId);
                 if (blockState != null) {
                     bedrockPalette.set(paletteIndex, blockState.getBedrockRuntimeId());
-                    this.checkResize(paletteIndex, bitArray);
+                    bitArray = this.checkResize(paletteIndex, bitArray);
+                } else {
+                    Droplet.getLogger().warn("Block {} has no Droplet mapping.", dropletId);
                 }
-            });
+            }
 
             // Encode the chunk data into the Bedrock format.
             this.getBlockStates().forEach(bitArray::set);
 
             buffer.writeByte(DropletChunkSection.encodeHeader(
                     bitArray.getVersion(), true)); // Palette header.
-            Arrays.stream(bitArray.getWords()).forEach(word -> buffer.writeIntLE((int) word)); // Words.
+            Arrays.stream(bitArray.getWordsInt()).forEach(buffer::writeIntLE); // Words.
             bitArray.writeSizeToNetwork(buffer, bedrockPalette.size()); // Palette size.
             bedrockPalette.forEach(buffer::writeIntLE); // Palette.
         }

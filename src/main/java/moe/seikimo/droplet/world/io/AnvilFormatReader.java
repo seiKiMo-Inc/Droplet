@@ -11,16 +11,19 @@ import moe.seikimo.droplet.world.DropletWorld;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.chunk.Chunk;
 import moe.seikimo.droplet.world.chunk.DropletChunk;
-import moe.seikimo.droplet.world.chunk.section.DropletChunkSection;
+import moe.seikimo.droplet.world.chunk.DropletChunkSection;
 import moe.seikimo.droplet.world.io.anvil.RegionFile;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class AnvilFormatReader implements WorldReader {
     private final Logger logger = Log.newLogger("Anvil Reader");
+    private final Set<Thread> threads = new HashSet<>();
 
     @Override
     public World read(File world) throws Exception {
@@ -55,7 +58,13 @@ public final class AnvilFormatReader implements WorldReader {
 
         for (var regionFile : regionFiles) {
             var region = new RegionFile(regionFile);
-            this.readRegion(worldInstance, region);
+            var thread = new Thread(() ->
+                    this.readRegion(worldInstance, region));
+            threads.add(thread);
+        }
+
+        for (var thread : threads) {
+            thread.start();
         }
 
         return worldInstance;
@@ -106,7 +115,7 @@ public final class AnvilFormatReader implements WorldReader {
      * @param section The section.
      */
     private void readSection(Chunk chunk, NbtMap section) {
-        var sectionY = section.getInt("Y");
+        var sectionY = section.getByte("Y");
         var sectionInstance = new DropletChunkSection(sectionY);
 
         // Read blocks in the section.

@@ -55,7 +55,12 @@ public class SingletonBitArray implements BitArray {
     }
 
     @Override
-    public long[] getWords() {
+    public int[] getWordsInt() {
+        return IntArrays.EMPTY_ARRAY;
+    }
+
+    @Override
+    public long[] getWordsLong() {
         return LongArrays.EMPTY_ARRAY;
     }
 

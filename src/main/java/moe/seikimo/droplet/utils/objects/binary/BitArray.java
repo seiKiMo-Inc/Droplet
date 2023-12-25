@@ -43,7 +43,9 @@ public interface BitArray {
         VarInts.writeInt(buffer, size);
     }
 
-    long[] getWords();
+    int[] getWordsInt();
+
+    long[] getWordsLong();
 
     BitArrayVersion getVersion();
 

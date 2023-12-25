@@ -29,7 +29,7 @@ public final class BlockPalette {
             javaBlockMap = new HashMap<>();
 
     @Getter private static final Map<String, Integer> bedrockBlockMap = new HashMap<>();
-    @Getter private static DefinitionRegistry<SimpleBlockDefinition> bedrockRegistry;
+    @Getter private static DefinitionRegistry<BlockDefinition> bedrockRegistry;
 
     /**
      * Loads the block palette from the resources.
@@ -44,7 +44,7 @@ public final class BlockPalette {
             var palette = (NbtList<NbtMap>) nbt.getList(
                     "blocks", NbtType.COMPOUND);
 
-            SimpleDefinitionRegistry.Builder<SimpleBlockDefinition> registry =
+            SimpleDefinitionRegistry.Builder<BlockDefinition> registry =
                     SimpleDefinitionRegistry.builder();
 
             // Parse the block palette into usable data.
@@ -101,7 +101,7 @@ public final class BlockPalette {
                 .filter(entry -> entry.getKey().equals(identifier))
                 .map(entry -> BlockPalette.getBedrockRegistry().getDefinition(entry.getValue()))
                 .filter(Objects::nonNull)
-                .filter(definition -> definition.getState().equals(state))
+                .filter(definition -> ((SimpleBlockDefinition) definition).getState().equals(state))
                 .findFirst().orElse(null);
     }
 }

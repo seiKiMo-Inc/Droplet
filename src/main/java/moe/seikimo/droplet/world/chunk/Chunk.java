@@ -3,7 +3,6 @@ package moe.seikimo.droplet.world.chunk;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import moe.seikimo.droplet.entity.Entity;
-import moe.seikimo.droplet.world.chunk.section.ChunkSection;
 
 public interface Chunk {
     /**

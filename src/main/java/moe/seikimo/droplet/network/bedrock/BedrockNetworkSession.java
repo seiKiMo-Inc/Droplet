@@ -41,6 +41,17 @@ public final class BedrockNetworkSession extends NetworkSession {
     @Override
     public void sendPacket(BedrockPacket... packets) {
         for (var packet : packets) {
+            this.getHandle().sendPacket(packet);
+
+            if (Server.getInstance().isLogPackets()) {
+                this.getLogger().debug("Sent packet: {}", packet.getClass().getSimpleName());
+            }
+        }
+    }
+
+    @Override
+    public void sendPacketImmediately(BedrockPacket... packets) {
+        for (var packet : packets) {
             this.getHandle().sendPacketImmediately(packet);
 
             if (Server.getInstance().isLogPackets()) {

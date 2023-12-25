@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.block.BlockStorage;
 import moe.seikimo.droplet.entity.Entity;
 import moe.seikimo.droplet.utils.objects.binary.SingletonBitArray;
-import moe.seikimo.droplet.world.chunk.section.ChunkSection;
 
 @Getter
 @RequiredArgsConstructor
@@ -69,12 +68,13 @@ public final class DropletChunk implements Chunk {
     public ByteBuf encodeBedrock() {
         var buffer = Unpooled.buffer();
 
-        // Write chunk version.
-        buffer.writeByte(VERSION);
-
         // Write chunk sections.
         for (var section : this.getSections()) {
-            buffer.writeBytes(section.encodeBedrock());
+            if (section == null) {
+                buffer.writeBytes(EMPTY_BIOME_DATA);
+            } else {
+                buffer.writeBytes(section.encodeBedrock());
+            }
         }
 
         // Write biome data.

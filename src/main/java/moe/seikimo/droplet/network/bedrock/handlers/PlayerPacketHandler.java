@@ -4,16 +4,19 @@ import lombok.Getter;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
 import moe.seikimo.droplet.player.Player;
-import moe.seikimo.droplet.world.chunk.section.DropletChunkSection;
+import moe.seikimo.droplet.world.chunk.DropletChunkSection;
+import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.packet.*;
 import org.cloudburstmc.protocol.common.PacketSignal;
 
+import java.util.Arrays;
+
 @Getter
-public final class BedrockPlayerPacketHandler implements BedrockPacketHandler {
+public final class PlayerPacketHandler implements BedrockPacketHandler {
     private final BedrockNetworkSession session;
     private final Player player;
 
-    public BedrockPlayerPacketHandler(BedrockNetworkSession session) {
+    public PlayerPacketHandler(BedrockNetworkSession session) {
         this.session = session;
         this.player = session.getPlayer();
 
@@ -35,6 +38,13 @@ public final class BedrockPlayerPacketHandler implements BedrockPacketHandler {
     @Override
     public PacketSignal handle(RequestChunkRadiusPacket packet) {
         this.getPlayer().setRenderDistance(packet.getRadius());
+
+        // Prepare network chunk publisher update.
+        var publisherPacket = new NetworkChunkPublisherUpdatePacket();
+        publisherPacket.setPosition(Vector3i.ZERO);
+        publisherPacket.setRadius(32);
+        this.getSession().sendPacket(publisherPacket);
+
         return PacketSignal.HANDLED;
     }
 
@@ -82,24 +92,31 @@ public final class BedrockPlayerPacketHandler implements BedrockPacketHandler {
                 System.out.println(world.getName());
                 System.out.println(world.getSeed());
 
-                for (var chunk : world.getChunks().values()) {
-                    for (var section : chunk.getSections()) {
-                        if (section == null) continue;
+                var chunk = world.getChunkAt(0, 0);
+                System.out.println(Arrays.toString(chunk.getSections()));
 
-                        if (section instanceof DropletChunkSection droplet) {
-                            if (droplet.getPalette().isEmpty()) {
-                                System.out.printf("%s is empty.%n", droplet.getY());
-                                continue;
-                            }
-
-                            System.out.println(droplet.getPalette());
-                            System.out.println(droplet.getBlockStates());
-                        }
-                    }
+                var section = chunk.getSections()[4];
+                if (section instanceof DropletChunkSection chunkSection) {
+                    System.out.println("Palette: " + chunkSection.getPalette());
+                    System.out.println("Block states: " + chunkSection.getBlockStates());
+                } else {
+                    System.out.println(section);
                 }
             }
         }
 
+        return PacketSignal.HANDLED;
+    }
+
+    @Override
+    public PacketSignal handle(BlockPickRequestPacket packet) {
+        var targetBlock = packet.getBlockPosition();
+        var world = Server.getInstance().getDefaultWorld();
+        var chunk = world.getChunkAt(targetBlock.getX(), targetBlock.getZ());
+        var section = chunk.getSections()[targetBlock.getY() >> 4];
+        System.out.println(
+                section.getBlockAt(targetBlock.getX() % 16, targetBlock.getY() % 16, targetBlock.getZ() % 16)
+        );
         return PacketSignal.HANDLED;
     }
 }

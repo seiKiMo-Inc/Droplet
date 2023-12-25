@@ -10,6 +10,8 @@ import moe.seikimo.droplet.utils.FileUtils;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.SimpleItemDefinition;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.common.DefinitionRegistry;
+import org.cloudburstmc.protocol.common.SimpleDefinitionRegistry;
 
 import java.util.*;
 
@@ -86,6 +88,7 @@ public final class ItemManager {
 
     private final List<ItemDefinition> definitionsList = new ArrayList<>();
     private final Set<ItemData> creativeItems = new HashSet<>();
+    private final DefinitionRegistry<ItemDefinition> registry;
 
     public ItemManager(
             Collection<ItemDefinition> definitions,
@@ -93,5 +96,10 @@ public final class ItemManager {
     ) {
         this.definitionsList.addAll(definitions);
         this.creativeItems.addAll(creativeItems);
+
+        SimpleDefinitionRegistry.Builder<ItemDefinition> registry
+                = SimpleDefinitionRegistry.builder();
+        definitions.forEach(registry::add);
+        this.registry = registry.build();
     }
 }

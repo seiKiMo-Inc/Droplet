@@ -35,7 +35,7 @@ public class Pow2BitArray implements BitArray {
     /**
      * Array used to store data
      */
-    private final long[] words;
+    private final int[] words;
 
     /**
      * Palette version information
@@ -48,7 +48,7 @@ public class Pow2BitArray implements BitArray {
      */
     private final int size;
 
-    Pow2BitArray(BitArrayVersion version, int size, long[] words) {
+    Pow2BitArray(BitArrayVersion version, int size, int[] words) {
         this.size = size;
         this.version = version;
         this.words = words;
@@ -64,11 +64,11 @@ public class Pow2BitArray implements BitArray {
      */
     public void set(int index, int value) {
         Preconditions.checkElementIndex(index, this.size);
-        Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue, "Invalid value %s", value);
+        // Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue, "Invalid value %s", value);
         int bitIndex = index * this.version.bits;
         int arrayIndex = bitIndex >> 5;
         int offset = bitIndex & 31;
-        this.words[arrayIndex] = this.words[arrayIndex] & ~((long) this.version.maxEntryValue << offset) | (long) (value & this.version.maxEntryValue) << offset;
+        this.words[arrayIndex] = this.words[arrayIndex] & ~(this.version.maxEntryValue << offset) | (value & this.version.maxEntryValue) << offset;
     }
 
     /**
@@ -89,13 +89,18 @@ public class Pow2BitArray implements BitArray {
         return this.size;
     }
 
+    @Override
+    public int[] getWordsInt() {
+        return this.words;
+    }
+
     /**
      * {@inheritDoc}
      * @return {@inheritDoc}
      */
     @Override
-    public long[] getWords() {
-        return this.words;
+    public long[] getWordsLong() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

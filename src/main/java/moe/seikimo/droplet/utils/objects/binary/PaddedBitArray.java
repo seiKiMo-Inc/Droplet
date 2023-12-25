@@ -34,7 +34,7 @@ public class PaddedBitArray implements BitArray {
     /**
      * Array used to store data
      */
-    private final long[] words;
+    private final int[] words;
 
     /**
      * Palette version information
@@ -46,7 +46,7 @@ public class PaddedBitArray implements BitArray {
      */
     private final int size;
 
-    PaddedBitArray(BitArrayVersion version, int size, long[] words) {
+    PaddedBitArray(BitArrayVersion version, int size, int[] words) {
         this.size = size;
         this.version = version;
         this.words = words;
@@ -60,11 +60,11 @@ public class PaddedBitArray implements BitArray {
     @Override
     public void set(int index, int value) {
         Preconditions.checkElementIndex(index, this.size);
-        Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue, "Invalid value");
+        // Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue, "Invalid value");
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 
-        this.words[arrayIndex] = this.words[arrayIndex] & ~((long) this.version.maxEntryValue << offset) | (long) (value & this.version.maxEntryValue) << offset;
+        this.words[arrayIndex] = this.words[arrayIndex] & ~(this.version.maxEntryValue << offset) | (value & this.version.maxEntryValue) << offset;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PaddedBitArray implements BitArray {
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 
-        return (int) (this.words[arrayIndex] >>> offset) & this.version.maxEntryValue;
+        return (this.words[arrayIndex] >>> offset) & this.version.maxEntryValue;
     }
 
     @Override
@@ -82,8 +82,13 @@ public class PaddedBitArray implements BitArray {
     }
 
     @Override
-    public long[] getWords() {
+    public int[] getWordsInt() {
         return this.words;
+    }
+
+    @Override
+    public long[] getWordsLong() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

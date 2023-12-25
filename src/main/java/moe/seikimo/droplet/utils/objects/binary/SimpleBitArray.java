@@ -74,7 +74,12 @@ public final class SimpleBitArray implements BitArray {
     }
 
     @Override
-    public long[] getWords() {
+    public int[] getWordsInt() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long[] getWordsLong() {
         return this.data;
     }
 

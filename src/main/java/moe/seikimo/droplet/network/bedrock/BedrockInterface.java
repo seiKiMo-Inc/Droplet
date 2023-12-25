@@ -8,7 +8,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import lombok.Getter;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkInterface;
-import moe.seikimo.droplet.network.bedrock.handlers.BedrockLoginPacketHandler;
+import moe.seikimo.droplet.network.bedrock.handlers.LoginPacketHandler;
 import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 import org.cloudburstmc.protocol.bedrock.BedrockPong;
@@ -99,10 +99,12 @@ public final class BedrockInterface implements NetworkInterface {
     private final class ServerInitializer extends BedrockServerInitializer {
         @Override
         protected void initSession(BedrockServerSession session) {
+            var networkSession = BedrockNetworkSession.from(session);
+
             session.setLogging(true);
-            session.setPacketHandler(new BedrockLoginPacketHandler(
-                    session, BedrockNetworkSession.from(session),
-                    server, BedrockInterface.this));
+            session.setPacketHandler(new LoginPacketHandler(
+                    session, networkSession, server, BedrockInterface.this));
+            networkSession.getLogger().debug("Player is attempting to connect.");
         }
     }
 }

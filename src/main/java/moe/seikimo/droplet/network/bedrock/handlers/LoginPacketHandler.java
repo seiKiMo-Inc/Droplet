@@ -19,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 @RequiredArgsConstructor
-public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
+public final class LoginPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
     private final BedrockNetworkSession networkSession;
 
@@ -52,7 +52,7 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
         var settingsPacket = new NetworkSettingsPacket();
         settingsPacket.setCompressionThreshold(1);
         settingsPacket.setCompressionAlgorithm(PacketCompressionAlgorithm.ZLIB);
-        this.networkSession.sendPacket(settingsPacket);
+        this.networkSession.sendPacketImmediately(settingsPacket);
 
         // Apply compression.
         this.session.setCompression(PacketCompressionAlgorithm.ZLIB);
@@ -86,12 +86,14 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
             // Create & send the handshake packet.
             var handshakePacket = new ServerToClientHandshakePacket();
             handshakePacket.setJwt(handshake);
-            this.networkSession.sendPacket(handshakePacket);
+            this.networkSession.sendPacketImmediately(handshakePacket);
 
             // Enable encryption locally.
             var secretKey = EncryptionUtils.getSecretKey(
                     keyPair.getPrivate(), clientPublicKey, salt);
             this.session.enableEncryption(secretKey);
+
+            this.networkSession.getLogger().debug("Player has finished login process.");
         } catch (JoseException | NoSuchAlgorithmException | InvalidKeySpecException exception) {
             this.server.getLogger().warn("Failed to parse JWT chain data.", exception);
             this.session.close("Invalid JWT chain data.");
@@ -120,7 +122,7 @@ public final class BedrockLoginPacketHandler implements BedrockPacketHandler {
 
         // Switch to the resource packs packet handler.
         this.session.setPacketHandler(
-                new BedrockResourcesPacketHandler(
+                new ResourcesPacketHandler(
                         this.session, this.networkSession));
 
         return PacketSignal.HANDLED;

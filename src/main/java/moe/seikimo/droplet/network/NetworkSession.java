@@ -44,4 +44,22 @@ public abstract class NetworkSession {
     public void sendPacket(Packet... packets) {
         throw new UnsupportedOperationException("Cannot send Java packets to Bedrock clients.");
     }
+
+    /**
+     * Sends one or more packets to the client.
+     *
+     * @param packets The packets to send.
+     */
+    public void sendPacketImmediately(BedrockPacket... packets) {
+        throw new UnsupportedOperationException("Cannot send Bedrock packets to Java clients.");
+    }
+
+    /**
+     * Sends one or more packets to the client.
+     *
+     * @param packets The packets to send.
+     */
+    public void sendPacketImmediately(Packet... packets) {
+        throw new UnsupportedOperationException("Cannot send Java packets to Bedrock clients.");
+    }
 }

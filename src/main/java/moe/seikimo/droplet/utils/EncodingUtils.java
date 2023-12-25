@@ -112,7 +112,7 @@ public interface EncodingUtils {
      * @return The index.
      */
     static int getIndex(int x, int y, int z) {
-        return ((x << 8) + (z << 4)) | y;
+        return (x << 8) | (z << 4) | y;
     }
 
     /**

@@ -8,6 +8,7 @@ import moe.seikimo.droplet.world.chunk.Chunk;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public final class DropletWorld implements World {
     private final long seed;
 
     private final Map<ChunkPos, Chunk> chunks
-            = new HashMap<>();
+            = new ConcurrentHashMap<>();
 
     @Override
     public void addChunk(Chunk chunk) {

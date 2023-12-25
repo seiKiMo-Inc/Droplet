@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Getter;
 import moe.seikimo.droplet.utils.objects.binary.BitArray;
 import moe.seikimo.droplet.utils.objects.binary.BitArrayVersion;
-import moe.seikimo.droplet.world.chunk.section.DropletChunkSection;
+import moe.seikimo.droplet.world.chunk.DropletChunkSection;
 
 import java.util.Arrays;
 
@@ -75,7 +75,7 @@ public final class BlockStorage {
      */
     public int size() {
         var size = 1; // Palette header.
-        size += this.getBitArray().getWords().length * 4; // Words.
+        size += this.getBitArray().getWordsInt().length * 4; // Words.
         size += 3; // Palette size.
         size += this.getPalette().size() * 3; // Palette.
         return size;
@@ -107,7 +107,7 @@ public final class BlockStorage {
         var palette = this.getPalette();
 
         buffer.writeByte(DropletChunkSection.encodeHeader(bitArray.getVersion(), true));
-        Arrays.stream(bitArray.getWords()).forEach(word -> buffer.writeIntLE((int) word));
+        Arrays.stream(bitArray.getWordsInt()).forEach(buffer::writeIntLE);
         bitArray.writeSizeToNetwork(buffer, palette.size());
         palette.forEach(buffer::writeIntLE);
     }

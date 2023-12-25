@@ -1,4 +1,4 @@
-package moe.seikimo.droplet.world.chunk.section;
+package moe.seikimo.droplet.world.chunk;
 
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;

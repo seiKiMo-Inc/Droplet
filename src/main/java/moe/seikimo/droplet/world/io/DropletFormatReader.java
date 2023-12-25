@@ -6,7 +6,7 @@ import moe.seikimo.droplet.world.DropletWorld;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.WorldFormat;
 import moe.seikimo.droplet.world.chunk.DropletChunk;
-import moe.seikimo.droplet.world.chunk.section.DropletChunkSection;
+import moe.seikimo.droplet.world.chunk.DropletChunkSection;
 
 import java.io.File;
 import java.io.FileInputStream;

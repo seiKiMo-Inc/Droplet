@@ -84,10 +84,10 @@ public enum BitArrayVersion {
     }
 
     public BitArray createArray(int size) {
-        return this.createArray(size, new long[(int) Math.ceil((float) size / entriesPerWord)]);
+        return this.createArray(size, new int[(int) Math.ceil((float) size / entriesPerWord)]);
     }
 
-    public BitArray createArray(int size, long[] words) {
+    public BitArray createArray(int size, int[] words) {
         if (this == V3 || this == V5 || this == V6) {
             // Padded palettes aren't able to use bitwise operations due to their padding.
             return new PaddedBitArray(this, size, words);

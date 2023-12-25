@@ -52,13 +52,13 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setRotation(Vector2f.ZERO);
         gamePacket.setSeed(0);
         gamePacket.setSpawnBiomeType(SpawnBiomeType.DEFAULT);
-        gamePacket.setCustomBiomeName("plains");
+        gamePacket.setCustomBiomeName("");
         gamePacket.setDimensionId(this.dimension.getId());
         gamePacket.setGeneratorId(0);
         gamePacket.setLevelGameType(GameType.SURVIVAL);
         gamePacket.setDifficulty(1);
         gamePacket.setDefaultSpawn(Vector3i.ZERO);
-        gamePacket.setAchievementsDisabled(false);
+        gamePacket.setAchievementsDisabled(true);
         // setEditorWorldType
         gamePacket.setCreatedInEditor(false);
         gamePacket.setExportedFromEditor(false);
