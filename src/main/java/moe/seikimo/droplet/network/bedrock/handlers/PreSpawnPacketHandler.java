@@ -12,6 +12,7 @@ import moe.seikimo.droplet.utils.ThreadUtils;
 import moe.seikimo.droplet.utils.enums.Dimension;
 import moe.seikimo.droplet.utils.enums.Platform;
 import moe.seikimo.droplet.world.biome.Biome;
+import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.GameRuleData;
@@ -114,6 +115,13 @@ public final class PreSpawnPacketHandler implements BedrockPacketHandler {
                 this.networkSession.sendPacket(chunkPacket);
             }
         }
+
+        // Respawn the player.
+        var respawnPacket = new RespawnPacket();
+        respawnPacket.setRuntimeEntityId(0);
+        respawnPacket.setPosition(Vector3f.ZERO);
+        respawnPacket.setState(RespawnPacket.State.SERVER_READY);
+        this.networkSession.sendPacket(respawnPacket);
 
         ThreadUtils.runAfter(() -> {
             // Prepare a response packet.
