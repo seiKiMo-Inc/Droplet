@@ -9,6 +9,10 @@ public final class SimpleBitArray implements BitArray {
     private final int multiply, add, shift;
     private final long[] data;
 
+    public SimpleBitArray(int bits, int size) {
+        this(bits, size, null);
+    }
+
     public SimpleBitArray(int bits, int size, long[] data) {
         this.bits = bits;
         this.size = size;

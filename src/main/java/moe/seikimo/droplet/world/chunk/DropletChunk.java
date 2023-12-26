@@ -1,5 +1,6 @@
 package moe.seikimo.droplet.world.chunk;
 
+import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntLists;
@@ -7,9 +8,16 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import moe.seikimo.droplet.block.BlockStorage;
 import moe.seikimo.droplet.entity.Entity;
+import moe.seikimo.droplet.utils.EncodingUtils;
 import moe.seikimo.droplet.utils.objects.binary.SingletonBitArray;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.protocol.common.util.VarInts;
+
+import java.util.BitSet;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -36,6 +44,9 @@ public final class DropletChunk implements Chunk {
             = new Long2ObjectOpenHashMap<>();
     private final ChunkSection[] sections
             = new ChunkSection[24];
+
+    @Getter @Setter
+    private NbtMap heightMaps;
 
     @Override
     public void setSection(int section, ChunkSection chunkSection) {
@@ -88,6 +99,46 @@ public final class DropletChunk implements Chunk {
 
     @Override
     public byte[] encodeJava() {
-        return new byte[0];
+        var buffer = Unpooled.buffer();
+
+        {
+            // Write chunk sections.
+            for (var section : this.getSections()) {
+                if (section == null) {
+                    // TODO: Write empty chunk section data.
+                    throw new UnsupportedOperationException("Empty chunk sections are not supported.");
+                } else {
+                    buffer.writeBytes(section.encodeJava());
+                }
+            }
+        }
+
+        {
+            // Write biomes to the buffer.
+            for (var z = 0; z < 16; z++) {
+                for (var x = 0; x < 16; x++) {
+                    buffer.writeByte(127);
+                }
+            }
+        }
+
+        {
+            // Write block entities to the buffer.
+            VarInts.writeInt(buffer, 0);
+            // TODO: Write block entities to the Java buffer.
+        }
+
+        return EncodingUtils.toBytes(buffer);
+    }
+
+    @Override
+    public LightUpdateData getJavaLightData() {
+        var empty = new BitSet();
+
+        // TODO: Compute proper world lighting.
+        return new LightUpdateData(
+                empty, empty, empty, empty,
+                List.of(), List.of()
+        );
     }
 }

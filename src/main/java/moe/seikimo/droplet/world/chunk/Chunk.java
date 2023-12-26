@@ -1,8 +1,10 @@
 package moe.seikimo.droplet.world.chunk;
 
+import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import moe.seikimo.droplet.entity.Entity;
+import org.cloudburstmc.nbt.NbtMap;
 
 public interface Chunk {
     /**
@@ -59,4 +61,21 @@ public interface Chunk {
      * @return The chunk encoded for the Java format.
      */
     byte[] encodeJava();
+
+    /**
+     * Sets the height maps.
+     *
+     * @param heightMaps The height maps.
+     */
+    void setHeightMaps(NbtMap heightMaps);
+
+    /**
+     * @return An NBT compound with the height maps.
+     */
+    NbtMap getHeightMaps();
+
+    /**
+     * @return The light data.
+     */
+    LightUpdateData getJavaLightData();
 }

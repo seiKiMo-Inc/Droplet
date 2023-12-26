@@ -17,9 +17,9 @@ public interface ChunkSection {
      * @param x The X coordinate of the block. (0-16)
      * @param y The Y coordinate of the block. (0-16)
      * @param z The Z coordinate of the block. (0-16)
-     * @return The block.
+     * @return The block's ID.
      */
-    Block getBlockAt(int x, int y, int z);
+    int getBlockAt(int x, int y, int z);
 
     /**
      * Sets a block in the section at the coordinates.
@@ -27,7 +27,7 @@ public interface ChunkSection {
      * @param x The X coordinate of the block. (0-16)
      * @param y The Y coordinate of the block. (0-16)
      * @param z The Z coordinate of the block. (0-16)
-     * @param paletteIndex The index of the block in the palette.
+     * @param paletteIndex The block ID of the block.
      */
     void setBlockAt(int x, int y, int z, int paletteIndex);
 
@@ -39,5 +39,5 @@ public interface ChunkSection {
     /**
      * @return The encoded chunk section.
      */
-    byte[] encodeJava();
+    ByteBuf encodeJava();
 }

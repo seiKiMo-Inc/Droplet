@@ -1,5 +1,6 @@
 package moe.seikimo.droplet.world.io;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import moe.seikimo.droplet.block.BlockPalette;
 import moe.seikimo.droplet.block.MinecraftBlock;
 import moe.seikimo.droplet.utils.EncodingUtils;
@@ -102,6 +103,10 @@ public final class AnvilFormatReader implements WorldReader {
                     this.readSection(chunkInstance, section);
                 }
 
+                // Read height maps.
+                var heightMaps = chunkNbt.getCompound("Heightmaps");
+                chunkInstance.setHeightMaps(heightMaps);
+
                 // Add the chunk to the world.
                 world.addChunk(chunkInstance);
             }
@@ -123,6 +128,7 @@ public final class AnvilFormatReader implements WorldReader {
         var palette = blockStates.getList("palette", NbtType.COMPOUND);
 
         // Encode the palette for Droplet's global palette.
+        var translated = new Int2IntArrayMap();
         for (var paletteEntry : palette) {
             var blockName = paletteEntry.getString("Name");
             var blockProperties = paletteEntry.getCompound("Properties");
@@ -135,7 +141,7 @@ public final class AnvilFormatReader implements WorldReader {
                 continue;
             }
 
-            sectionInstance.getPalette().add((int) paletteIndex);
+            translated.put(palette.indexOf(paletteEntry), (int) paletteIndex);
         }
 
         // Read the block data.
@@ -150,7 +156,9 @@ public final class AnvilFormatReader implements WorldReader {
                     for (var z = 0; z < 16; z++) {
                         var index = EncodingUtils.anvilIndex(x, y, z);
                         var paletteIndex = bitArray.get(index);
-                        sectionInstance.setBlockAt(x, y, z, paletteIndex);
+                        var blockId = translated.get(paletteIndex);
+
+                        sectionInstance.setBlockAt(x, y, z, blockId);
                     }
                 }
             }

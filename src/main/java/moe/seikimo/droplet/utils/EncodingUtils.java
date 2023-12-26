@@ -1,7 +1,7 @@
 package moe.seikimo.droplet.utils;
 
 import com.google.gson.Gson;
-import moe.seikimo.droplet.world.WorldFormat;
+import io.netty.buffer.ByteBuf;
 import moe.seikimo.droplet.world.WorldFormat.ChunkPos;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.nbt.NBTInputStream;
@@ -62,6 +62,18 @@ public interface EncodingUtils {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    /**
+     * Reads the bytes from a buffer into a byte array.
+     *
+     * @param buffer The buffer to read from.
+     * @return The byte array.
+     */
+    static byte[] toBytes(ByteBuf buffer) {
+        var bytes = new byte[buffer.readableBytes()];
+        buffer.readBytes(bytes);
+        return bytes;
     }
 
     /**
