@@ -23,14 +23,18 @@ import java.util.zip.GZIPInputStream;
 public final class BlockPalette {
     private static final String PATH = "data/droplet_block_palette.nbt";
 
+    /** This is a map of Droplet block IDs -> Minecraft block states. */
     @Getter private static final Int2ObjectMap<BlockState>
             palette = new Int2ObjectOpenHashMap<>();
+
+    /** This is used for reading Anvil-formatted chunks. */
     @Getter private static final Map<MinecraftBlock, Integer>
-            javaBlockMap = new HashMap<>();
+            javaPaletteMap = new HashMap<>();
 
     @Getter private static int airBlock = 0;
 
-    @Getter private static final Map<String, Integer> bedrockBlockMap = new HashMap<>();
+    @Getter private static final Map<String, Integer>
+            bedrockBlockMap = new HashMap<>();
     @Getter private static DefinitionRegistry<BlockDefinition> bedrockRegistry;
 
     /**
@@ -53,6 +57,7 @@ public final class BlockPalette {
             var definitions = new HashMap<Integer, BlockDefinition>();
             for (var id = 0; id < palette.size(); id++) {
                 var blockData = palette.get(id);
+                var javaId = blockData.getInt("jid");
                 var bedrockId = blockData.getInt("bid");
                 var javaState = blockData.getCompound("jstates");
                 var bedrockState = blockData.getCompound("bstates");
@@ -60,7 +65,8 @@ public final class BlockPalette {
                 var bedrockIdentifier = blockData.getString("bname");
 
                 // Create data holders for the block.
-                var blockState = new BlockState(bedrockId,
+                var blockState = new BlockState(
+                        javaId, bedrockId,
                         javaState, bedrockState,
                         javaIdentifier, bedrockIdentifier);
                 var minecraftBlock = MinecraftBlock.fromNbt(
@@ -68,7 +74,7 @@ public final class BlockPalette {
 
                 // Add mappings for the Droplet ID.
                 BlockPalette.palette.put(id, blockState);
-                BlockPalette.javaBlockMap.put(minecraftBlock, id);
+                BlockPalette.javaPaletteMap.put(minecraftBlock, id);
                 // Note the block identifier.
                 BlockPalette.bedrockBlockMap.put(bedrockIdentifier, bedrockId);
 

@@ -135,7 +135,7 @@ public final class AnvilFormatReader implements WorldReader {
 
             // Look up the block palette ID.
             var block = MinecraftBlock.fromNbt(blockName, blockProperties);
-            var paletteIndex = BlockPalette.getJavaBlockMap().get(block);
+            var paletteIndex = BlockPalette.getJavaPaletteMap().get(block);
             if (paletteIndex == null) {
                 this.logger.trace("Block {} has no Droplet mapping.", block);
                 continue;

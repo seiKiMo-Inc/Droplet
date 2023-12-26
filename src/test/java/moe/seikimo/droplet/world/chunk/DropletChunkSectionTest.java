@@ -1,6 +1,7 @@
 package moe.seikimo.droplet.world.chunk;
 
 import io.netty.buffer.ByteBuf;
+import moe.seikimo.droplet.block.BlockPalette;
 import moe.seikimo.droplet.utils.EncodingUtils;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.junit.Assert;
@@ -11,10 +12,13 @@ import static moe.seikimo.droplet.utils.EncodingUtils.toBytes;
 public final class DropletChunkSectionTest {
     /** This is the 1.20.50 block ID for a 'cobblestone_wall'. */
     private static final int BLOCK_ID_1 = 18660;
+    private static final int JAVA_ID_1 = 8009;
     /** This is the 1.20.50 block ID for a 'cobbled_deepslate_wall'. */
     private static final int BLOCK_ID_2 = 18701;
+    private static final int JAVA_ID_2 = 25063;
     /** This is the 1.20.50 block ID for a 'red_sandstone_wall'. */
     private static final int BLOCK_ID_3 = 18849;
+    private static final int JAVA_ID_3 = 15121;
 
     /**
      * The first two bytes should be the number of non-air blocks
@@ -29,6 +33,9 @@ public final class DropletChunkSectionTest {
      * Checks for proper encoding of a chunk section into the Java chunk format.
      */
     @Test public void encodeJavaChunk() {
+        // Load palette data.
+        BlockPalette.load();
+
         var section = new DropletChunkSection(0);
 
         // Fill the section with cobblestone walls.
@@ -106,9 +113,9 @@ public final class DropletChunkSectionTest {
                         var blockId = palette[paletteIndex];
 
                         var expectedId = switch (y % 3) {
-                            case 0 -> BLOCK_ID_1;
-                            case 1 -> BLOCK_ID_2;
-                            case 2 -> BLOCK_ID_3;
+                            case 0 -> JAVA_ID_1;
+                            case 1 -> JAVA_ID_2;
+                            case 2 -> JAVA_ID_3;
                             default -> throw new IllegalStateException("Unexpected value: " + y % 3);
                         };
 

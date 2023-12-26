@@ -115,11 +115,20 @@ public final class DropletChunkSection implements ChunkSection {
 
             buffer.writeByte(bitsPerEntry); // Bits per entry.
             if (bitsPerEntry < 8) {
-                // Use a direct palette structure.
+                // Use an indirect palette structure.
                 // The registry ID is directly mapped to the block.
 
                 VarInts.writeInt(buffer, palette.size()); // Palette size.
-                palette.forEach(entry -> VarInts.writeInt(buffer, entry)); // Palette data.
+
+                // Translate the palette.
+                palette.forEach(entry -> {
+                    var blockState = BlockPalette.getPalette().get(entry);
+                    if (blockState != null) {
+                        VarInts.writeInt(buffer, blockState.getJavaRuntimeId());
+                    } else {
+                        Droplet.getLogger().warn("Block {} has no Droplet mapping.", entry);
+                    }
+                });
             }
 
             // Convert the block structure to YZX.
