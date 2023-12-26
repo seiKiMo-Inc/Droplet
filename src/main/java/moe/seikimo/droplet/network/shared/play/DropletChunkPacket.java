@@ -1,9 +1,11 @@
 package moe.seikimo.droplet.network.shared.play;
 
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.network.shared.BasePacket;
+import moe.seikimo.droplet.utils.ConversionUtils;
 import moe.seikimo.droplet.world.chunk.Chunk;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
@@ -41,13 +43,10 @@ public final class DropletChunkPacket extends BasePacket {
     public Collection<Packet> toJava() {
         var chunk = this.chunk;
 
-        return null;
-//        return new ClientboundLevelChunkWithLightPacket(
-//                chunk.getX(), chunk.getZ(),
-//                chunk.encodeJava(),
-//                new CompoundTag("heightmap"),
-//                new BlockEntityInfo[0],
-//                new LightUpdateData()
-//        );
+        return List.of(new ClientboundLevelChunkWithLightPacket(
+                chunk.getX(), chunk.getZ(), chunk.encodeJava(),
+                ConversionUtils.convert(chunk.getHeightMaps()),
+                new BlockEntityInfo[0], chunk.getJavaLightData()
+        ));
     }
 }

@@ -8,6 +8,7 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import com.github.steveice10.packetlib.AbstractServer;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -17,7 +18,8 @@ import lombok.Getter;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkInterface;
 import moe.seikimo.droplet.network.ProtocolInfo;
-import moe.seikimo.droplet.network.java.handlers.JavaLoginPacketHandler;
+import moe.seikimo.droplet.network.java.handlers.InGamePacketHandler;
+import moe.seikimo.droplet.network.java.handlers.LoginPacketHandler;
 import moe.seikimo.handler.ObjectHandler;
 import net.kyori.adventure.text.Component;
 
@@ -47,9 +49,8 @@ public final class JavaInterface implements NetworkInterface {
         this.mcServer.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) this::getServerInfo);
 
         // Register packet handlers.
-        this.getPacketHandler().register(ServerboundFinishConfigurationPacket.class,
-                (JavaNetworkSession session, ServerboundFinishConfigurationPacket packet) ->
-                        JavaLoginPacketHandler.handle(session, packet));
+        this.getPacketHandler().register(ServerboundFinishConfigurationPacket.class, (JavaNetworkSession s, ServerboundFinishConfigurationPacket _) -> LoginPacketHandler.handle(s));
+        this.getPacketHandler().register(ServerboundChatCommandPacket.class, (JavaNetworkSession s, ServerboundChatCommandPacket p) -> InGamePacketHandler.handle(s, p));
 
         // Add session listener.
         this.mcServer.addListener(new JavaServerAdapter(this));

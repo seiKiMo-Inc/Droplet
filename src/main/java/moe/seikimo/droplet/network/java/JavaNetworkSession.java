@@ -4,6 +4,7 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.network.shared.BasePacket;
 import moe.seikimo.handler.DataReceiver;
@@ -31,13 +32,22 @@ public final class JavaNetworkSession extends NetworkSession implements DataRece
 
     @Override
     public void sendPacket(BasePacket packet) {
-        packet.toJava().forEach(this.getHandle()::send);
+        packet.toJava().forEach(this::sendPacket);
     }
 
     @Override
     public void sendPacket(Packet... packets) {
         for (var packet : packets) {
             this.getHandle().send(packet);
+
+            if (Server.getInstance().isLogPackets()) {
+                this.getLogger().debug("Sent packet: {}", packet.getClass().getSimpleName());
+            }
         }
+    }
+
+    @Override
+    public void sendPacketImmediately(Packet... packets) {
+        this.sendPacket(packets);
     }
 }

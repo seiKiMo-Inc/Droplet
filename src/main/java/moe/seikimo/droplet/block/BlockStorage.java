@@ -13,7 +13,7 @@ import java.util.Arrays;
 @Getter
 // Taken from GeyserMC's BlockStorage.java
 public final class BlockStorage {
-    private static final int SIZE = 4096;
+    public static final int SIZE = 4096;
 
     private final IntList palette;
     private BitArray bitArray;

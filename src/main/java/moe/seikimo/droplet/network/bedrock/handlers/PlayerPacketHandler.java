@@ -97,8 +97,7 @@ public final class PlayerPacketHandler implements BedrockPacketHandler {
 
                 var section = chunk.getSections()[4];
                 if (section instanceof DropletChunkSection chunkSection) {
-                    System.out.println("Palette: " + chunkSection.getPalette());
-                    System.out.println("Block states: " + chunkSection.getBlockStates());
+                    System.out.println(chunkSection.getStorage());
                 } else {
                     System.out.println(section);
                 }

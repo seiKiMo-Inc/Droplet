@@ -28,6 +28,8 @@ public final class BlockPalette {
     @Getter private static final Map<MinecraftBlock, Integer>
             javaBlockMap = new HashMap<>();
 
+    @Getter private static int airBlock = 0;
+
     @Getter private static final Map<String, Integer> bedrockBlockMap = new HashMap<>();
     @Getter private static DefinitionRegistry<BlockDefinition> bedrockRegistry;
 
@@ -69,6 +71,11 @@ public final class BlockPalette {
                 BlockPalette.javaBlockMap.put(minecraftBlock, id);
                 // Note the block identifier.
                 BlockPalette.bedrockBlockMap.put(bedrockIdentifier, bedrockId);
+
+                // Set the air block.
+                if (javaIdentifier.equals("minecraft:air")) {
+                    BlockPalette.airBlock = id;
+                }
 
                 // Create a block definition for Bedrock.
                 var definition = new SimpleBlockDefinition(
