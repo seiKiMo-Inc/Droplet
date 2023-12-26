@@ -28,6 +28,7 @@ public final class BlockPaletteGenerator {
     public static void generate() {
         var palette = BedrockBlockPalette.getInstance().getBlocks();
         var blocks = MinecraftBlockMap.getInstance().getJavaToBedrockMap();
+        var blockStates = MinecraftBlockMap.getInstance().getBlockStateIdMap();
         var mapping = JavaBedrockBlockMap.getInstance().getJavaToBedrockMap();
 
         // Create a map for the palette.
@@ -46,12 +47,21 @@ public final class BlockPaletteGenerator {
             var javaBlock = entry.getKey();
             var bedrockBlock = entry.getValue();
 
+            // Try to fetch the Bedrock block ID.
             var bedrockId = paletteMap.get(bedrockBlock.hashCode());
             var javaBedrockId = paletteMap.get(javaBlock.hashCode());
             if (bedrockId != null) {
                 block.putInt("bid", bedrockId);
             } else if (javaBedrockId != null) {
                 block.putInt("bid", javaBedrockId);
+            } else {
+                noIdBlocks.add(javaBlock);
+            }
+
+            // Try to fetch the Java block ID.
+            var javaId = blockStates.get(javaBlock);
+            if (javaId != null) {
+                block.putInt("jid", javaId);
             } else {
                 noIdBlocks.add(javaBlock);
             }
@@ -79,7 +89,7 @@ public final class BlockPaletteGenerator {
 
             // Write blocks with no ID.
             var noIdBuilder = new StringBuilder();
-            noIdBuilder.append("Blocks with no ID:\n");
+            noIdBuilder.append("Blocks with no ID (Bedrock or Java):\n");
 
             noIdBlocks.forEach(block ->
                     noIdBuilder.append(String.format("(%s): %s\n",

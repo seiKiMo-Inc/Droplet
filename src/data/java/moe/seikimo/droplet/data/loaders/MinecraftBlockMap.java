@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The 'blocks.json' just so happens to also contain state ID mappings.
+ * We use it for both mapping Bedrock to Java, but also to get the state ID.
+ */
 @Getter
 public final class MinecraftBlockMap {
     @Getter private static final MinecraftBlockMap instance;
@@ -24,6 +28,8 @@ public final class MinecraftBlockMap {
     private final Map<MinecraftBlock, MinecraftBlock>
             javaToBedrockMap = new HashMap<>(),
             bedrockToJavaMap = new HashMap<>();
+    private final Map<MinecraftBlock, Integer>
+            blockStateIdMap = new HashMap<>();
 
     private MinecraftBlockMap() {
         this.readFromFile();
@@ -35,6 +41,7 @@ public final class MinecraftBlockMap {
         try {
             var data = Stream.json(Constants.MINECRAFT_BLOCK_MAP);
 
+            var blockStateId = 0;
             for (var entry : data.entrySet()) {
                 var javaTag = entry.getKey();
                 var bedrockData = entry.getValue().getAsJsonObject();
@@ -45,8 +52,11 @@ public final class MinecraftBlockMap {
                 var bedrockBlock = MinecraftBlock.fromJson(bedrockName, bedrockState);
 
                 var javaBlock = MinecraftBlock.fromString(javaTag);
+
                 this.getBedrockToJavaMap().put(bedrockBlock, javaBlock);
                 this.getJavaToBedrockMap().put(javaBlock, bedrockBlock);
+
+                this.getBlockStateIdMap().put(javaBlock, blockStateId++);
             }
 
             logger.info("Read {} mappings from file.", this.getJavaToBedrockMap().size());
