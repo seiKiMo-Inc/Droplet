@@ -139,7 +139,7 @@ public final class DropletStartGamePacket extends BasePacket {
                 0, // Max Players (unused)
                 config.getInt("world.max_render_distance", 32),
                 config.getInt("world.max_simulation_distance", 32),
-                config.getBoolean("player.show_debug_info", false),
+                !config.getBoolean("player.show_debug_info", false),
                 false, // Enable respawn screen
                 true, // Limited crafting
                 new PlayerSpawnInfo(
