@@ -101,7 +101,7 @@ public final class DropletChunkSectionTest {
             for (var y = 0; y < 16; y++) {
                 for (var z = 0; z < 16; z++) {
                     for (var x = 0; x < 16; x++) {
-                        var index = EncodingUtils.anvilIndex(x, y, z);
+                        var index = EncodingUtils.javaIndex(x, y, z);
                         var startLong = (index * bitsPerEntry) / 64;
                         var startOffset = (index * bitsPerEntry) % 64;
                         var endLong = ((index + 1) * bitsPerEntry - 1) / 64;

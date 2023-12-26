@@ -135,7 +135,7 @@ public interface EncodingUtils {
      * @param z The Z coordinate.
      * @return The index.
      */
-    static int anvilIndex(int x, int y, int z) {
+    static int javaIndex(int x, int y, int z) {
         return y * 16 * 16 + z * 16 + x;
     }
 

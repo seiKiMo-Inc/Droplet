@@ -154,7 +154,7 @@ public final class AnvilFormatReader implements WorldReader {
             for (var x = 0; x < 16; x++) {
                 for (var y = 0; y < 16; y++) {
                     for (var z = 0; z < 16; z++) {
-                        var index = EncodingUtils.anvilIndex(x, y, z);
+                        var index = EncodingUtils.javaIndex(x, y, z);
                         var paletteIndex = bitArray.get(index);
                         var blockId = translated.get(paletteIndex);
 

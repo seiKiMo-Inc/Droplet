@@ -17,7 +17,6 @@ import org.cloudburstmc.protocol.common.util.VarInts;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @Getter
 @ToString
@@ -108,6 +107,22 @@ public final class DropletChunkSection implements ChunkSection {
 
         var buffer = Unpooled.buffer();
 
+        // Get all non-air blocks in the chunk.
+        var nonAirBlocks = 0;
+        for (var y = 0; y < 16; y++) {
+            for (var z = 0; z < 16; z++) {
+                for (var x = 0; x < 16; x++) {
+                    var index = EncodingUtils.getIndex(x, y, z);
+                    var paletteIndex = bitArray.get(index);
+                    var blockState = palette.getInt(paletteIndex);
+                    if (blockState != BlockPalette.getAirBlock())
+                        nonAirBlocks++;
+                }
+            }
+        }
+
+        buffer.writeShort(nonAirBlocks); // Non-air block count.
+
         {
             // Calculate the bits per entry for blocks.
             // This is a minimum value of 4.
@@ -137,7 +152,7 @@ public final class DropletChunkSection implements ChunkSection {
                 for (var z = 0; z < 16; z++) {
                     for (var x = 0; x < 16; x++) {
                         var index = EncodingUtils.getIndex(x, y, z);
-                        var converted = EncodingUtils.anvilIndex(x, y, z);
+                        var converted = EncodingUtils.javaIndex(x, y, z);
 
                         var blockId = bitArray.get(index);
                         newArray.set(converted, blockId);
@@ -149,6 +164,14 @@ public final class DropletChunkSection implements ChunkSection {
             var words = newArray.getWordsLong();
             VarInts.writeInt(buffer, words.length); // Data array length.
             Arrays.stream(words).forEach(buffer::writeLong); // Data array.
+        }
+
+        {
+            // TODO: Encode biomes.
+            buffer.writeByte(0); // Bits per entry.
+            // buffer.writeByte(0); // Palette length.
+            buffer.writeByte(0); // Palette entry.
+            buffer.writeByte(0); // Data array length.
         }
 
         return buffer;
