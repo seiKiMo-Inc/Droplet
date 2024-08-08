@@ -100,10 +100,13 @@ public final class BedrockInterface implements NetworkInterface {
         @Override
         protected void initSession(BedrockServerSession session) {
             var networkSession = BedrockNetworkSession.from(session);
+            BedrockInterface.this.server.getSessions().add(networkSession);
+
+            networkSession.setPacketHandler(new LoginPacketHandler(
+                    session, networkSession, server, BedrockInterface.this));
 
             session.setLogging(true);
-            session.setPacketHandler(new LoginPacketHandler(
-                    session, networkSession, server, BedrockInterface.this));
+            session.setPacketHandler(networkSession);
             networkSession.getLogger().debug("Player is attempting to connect.");
         }
     }

@@ -37,7 +37,7 @@ public final class ResourcesPacketHandler implements BedrockPacketHandler {
             case COMPLETED -> {
                 this.networkSession.getLogger().debug("Client has completed resource pack loading.");
 
-                this.session.setPacketHandler(new PreSpawnPacketHandler(
+                this.networkSession.setPacketHandler(new PreSpawnPacketHandler(
                         this.session, this.networkSession));
 
                 yield PacketSignal.HANDLED;

@@ -6,6 +6,7 @@ import lombok.Setter;
 import moe.seikimo.droplet.network.shared.BasePacket;
 import moe.seikimo.droplet.player.Player;
 import moe.seikimo.droplet.utils.Log;
+import moe.seikimo.droplet.utils.enums.Device;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.slf4j.Logger;
 
@@ -13,7 +14,11 @@ public abstract class NetworkSession {
     private static int nextId = 1;
 
     @Getter private final Logger logger
-            = Log.newLogger("Network Session #" + nextId++);
+            = Log.newLogger(STR."Network Session #\{nextId++}");
+
+    @Getter @Setter
+    private Device device;
+
     @Setter private Player player;
 
     public NetworkSession() {

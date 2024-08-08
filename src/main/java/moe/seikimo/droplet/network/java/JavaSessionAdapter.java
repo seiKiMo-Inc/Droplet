@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.Server
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerRotPacket;
 import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public final class JavaSessionAdapter extends SessionAdapter {
     );
 
     private final JavaInterface netInterface;
+
+    @Override
+    public void connected(ConnectedEvent event) {
+        var sessionWrapper = JavaNetworkSession.from(event.getSession());
+        this.netInterface.getServer().getSessions().add(sessionWrapper);
+    }
 
     @Override
     public void packetReceived(Session session, Packet packet) {

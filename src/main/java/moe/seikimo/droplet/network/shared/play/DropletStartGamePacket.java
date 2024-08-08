@@ -50,12 +50,12 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setPlayerGameType(convert(this.gameMode));
         gamePacket.setPlayerPosition(Vector3f.ZERO);
         gamePacket.setRotation(Vector2f.ZERO);
-        gamePacket.setSeed(0);
+        gamePacket.setSeed(-1);
         gamePacket.setSpawnBiomeType(SpawnBiomeType.DEFAULT);
         gamePacket.setCustomBiomeName("");
+        gamePacket.setLevelGameType(GameType.SURVIVAL);
         gamePacket.setDimensionId(this.dimension.getId());
         gamePacket.setGeneratorId(0);
-        gamePacket.setLevelGameType(GameType.SURVIVAL);
         gamePacket.setDifficulty(1);
         gamePacket.setDefaultSpawn(Vector3i.ZERO);
         gamePacket.setAchievementsDisabled(true);
@@ -103,26 +103,30 @@ public final class DropletStartGamePacket extends BasePacket {
         gamePacket.setPremiumWorldTemplateId(UUID.randomUUID().toString());
         gamePacket.setWorldTemplateId(UUID.randomUUID());
         gamePacket.setTrial(false);
-        gamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.SERVER_WITH_REWIND);
+        gamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.SERVER);
         gamePacket.setCurrentTick(0L);
         gamePacket.setEnchantmentSeed(0);
         // TODO: Send custom blocks to the client.
         gamePacket.setBlockPalette(new NbtList<>(NbtType.COMPOUND, NbtMap.EMPTY));
         // TODO: Send custom items to the client.
         gamePacket.setItemDefinitions(server.getItemManager().getDefinitionsList());
-        gamePacket.setMultiplayerCorrelationId(UUID.randomUUID().toString());
+        gamePacket.setMultiplayerCorrelationId("");
         gamePacket.setInventoriesServerAuthoritative(true);
         // setGameVersion
         // TODO: Send player entity properties.
         gamePacket.setPlayerPropertyData(NbtMap.EMPTY);
         gamePacket.setBlockRegistryChecksum(0);
         gamePacket.setClientSideGenerationEnabled(false);
-        gamePacket.setWorldTemplateId(UUID.randomUUID());
+        gamePacket.setWorldTemplateId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
         gamePacket.setChatRestrictionLevel(ChatRestrictionLevel.NONE);
         gamePacket.setDisablingPlayerInteractions(false);
         gamePacket.setBlockNetworkIdsHashed(false);
         // setServerAuthoritativeSound
         gamePacket.setServerEngine("Droplet");
+        gamePacket.setHardcore(false);
+        gamePacket.setServerId("");
+        gamePacket.setWorldId("");
+        gamePacket.setScenarioId("");
 
         return List.of(gamePacket);
     }

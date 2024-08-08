@@ -1,24 +1,34 @@
 package moe.seikimo.droplet;
 
+import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
 import lombok.Setter;
 import moe.seikimo.droplet.block.BlockPalette;
+import moe.seikimo.droplet.entity.DropletEntity;
 import moe.seikimo.droplet.item.ItemManager;
 import moe.seikimo.droplet.network.NetworkManager;
+import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.java.JavaInterface;
+import moe.seikimo.droplet.network.shared.BasePacket;
+import moe.seikimo.droplet.network.shared.play.DropletPlayerListPacket;
+import moe.seikimo.droplet.player.DropletSkin;
+import moe.seikimo.droplet.player.Player;
+import moe.seikimo.droplet.player.data.DeviceInfo;
 import moe.seikimo.droplet.utils.Log;
 import moe.seikimo.droplet.utils.objects.Config;
 import moe.seikimo.droplet.world.World;
 import moe.seikimo.droplet.world.biome.Biome;
 import moe.seikimo.droplet.world.io.AnvilFormatReader;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
+import org.cloudburstmc.protocol.bedrock.packet.PlayerListPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Server {
     /**
@@ -31,6 +41,7 @@ public final class Server {
         BlockPalette.load();
         ItemManager.load();
         Biome.load();
+        DropletEntity.loadIdentifiers();
     }
 
     @Getter private static Server instance;
@@ -40,8 +51,15 @@ public final class Server {
             = LoggerFactory.getLogger("Server");
     private final NetworkManager networkManager
             = new NetworkManager(this);
-    @Getter private final List<Object> onlinePlayers
+
+    @Getter private final List<NetworkSession> sessions
+            = Collections.synchronizedList(new ArrayList<>());
+    @Getter private final List<Player> onlinePlayers
             = new ArrayList<>();
+
+    @Getter private final Map<UUID, PlayerListPacket.Entry> playerList
+            = new ConcurrentHashMap<>();
+
     @Getter private final Config config
             = Config.read(new File("server.properties"));
 
@@ -63,8 +81,8 @@ public final class Server {
             throw new RuntimeException("No configuration detected.");
         }
 
-        // Set the debug mode.
-        Server.isDebug = this.config.getBoolean("server.debug", false);
+        // Enable debug mode.
+        Server.isDebug = this.getConfig().getBoolean("server.debug", false);
         Log.setDebug(this.getLogger());
 
         // Enable packet logging.
@@ -89,7 +107,8 @@ public final class Server {
             // this.setDefaultWorld(worldReader.read(new File("world.droplet")));
 
             var reader = new AnvilFormatReader();
-            this.setDefaultWorld(reader.read(new File("worlds/world")));
+            var world = reader.read(new File("worlds/world"));
+            this.setDefaultWorld(world);
         } catch (IOException exception) {
             this.getLogger().error("Failed to read default world file.", exception);
             System.exit(1);
@@ -99,10 +118,89 @@ public final class Server {
         }
     }
 
+    /// <editor-fold desc="Network Methods">
+
+    /**
+     * Broadcasts a collection of Bedrock packets to all Bedrock clients.
+     *
+     * @param packets The packets to broadcast.
+     */
+    public void broadcastPacket(BedrockPacket... packets) {
+        for (var session : this.getSessions()) {
+            if (!session.getDevice().isBedrock()) continue;
+            Arrays.stream(packets).forEach(session::sendPacket);
+        }
+    }
+
+    /**
+     * Broadcasts a collection of Java packets to all Java clients.
+     *
+     * @param packets The packets to broadcast.
+     */
+    public void broadcastPacket(Packet... packets) {
+        for (var session : this.getSessions()) {
+            if (session.getDevice().isBedrock()) continue;
+            Arrays.stream(packets).forEach(session::sendPacket);
+        }
+    }
+
+    /**
+     * Broadcasts a packet to all clients.
+     *
+     * @param packet The packet to broadcast.
+     */
+    public void broadcastPacket(BasePacket packet) {
+        this.getSessions().forEach(s -> s.sendPacket(packet));
+    }
+
+    /// </editor-fold>
+
+    /// <editor-fold desc="Player Management">
+
+    /**
+     * Adds a player to the server list.
+     * TODO: Add support for Java-specific list fields.
+     *
+     * @param player The player to add.
+     */
+    public void addPlayerToList(Player player) {
+        this.addPlayerToList(
+                player.getUuid(),
+                player.getEntityId(),
+                player.getDisplayName(),
+                player.getDeviceInfo(),
+                player.getXuid(),
+                player.getSkin()
+        );
+    }
+
+    /**
+     * Adds a player to the server list of players.
+     */
+    public void addPlayerToList(
+            UUID uuid, long entityId,
+            String name, DeviceInfo deviceInfo,
+            String xuid, DropletSkin skinData
+    ) {
+        var entry = DropletPlayerListPacket.Entry.builder()
+                .uuid(uuid).entityId(entityId)
+                .name(name).deviceInfo(deviceInfo)
+                .xuid(xuid).skin(skinData)
+                .build();
+        var listPacket = new DropletPlayerListPacket(
+                DropletPlayerListPacket.Action.ADD, List.of(entry)
+        );
+
+        // Broadcast the packet.
+        this.broadcastPacket(listPacket);
+    }
+
     /**
      * @return The amount of players online.
      */
     public int getPlayerCount() {
         return this.onlinePlayers.size();
     }
+
+    /// </editor-fold>
 }

@@ -94,7 +94,7 @@ public final class DropletChunkSection implements ChunkSection {
                     bitArray.getVersion(), true)); // Palette header.
             Arrays.stream(bitArray.getWordsInt()).forEach(buffer::writeIntLE); // Words.
             bitArray.writeSizeToNetwork(buffer, bedrockPalette.size()); // Palette size.
-            bedrockPalette.forEach(buffer::writeIntLE); // Palette.
+            bedrockPalette.forEach(entry -> VarInts.writeInt(buffer, entry)); // Palette.
         }
 
         return buffer;

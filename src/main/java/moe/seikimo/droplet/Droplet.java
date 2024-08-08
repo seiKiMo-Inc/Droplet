@@ -2,6 +2,8 @@ package moe.seikimo.droplet;
 
 import lombok.Getter;
 import moe.seikimo.droplet.utils.Log;
+import moe.seikimo.droplet.utils.objects.Config;
+import moe.seikimo.droplet.utils.objects.Config.ConfigType;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -19,6 +21,8 @@ public final class Droplet {
     @Getter private static final Logger logger
             = LoggerFactory.getLogger(Droplet.class);
 
+    @Getter private static Config environment;
+    @Getter private static boolean isDebug = false;
     private static LineReader lineReader = null;
 
     static {
@@ -29,6 +33,9 @@ public final class Droplet {
     public static void main(String[] args) {
         Droplet.getLogger().info("Starting Droplet...");
 
+        // Parse environment variables.
+        Droplet.loadEnvironment();
+
         // Initialize the game server.
         Server.initialize();
 
@@ -37,11 +44,21 @@ public final class Droplet {
 
         // Start the game server.
         Server.getInstance().start();
-        // Set the debug logger.
-        Log.setDebug(Droplet.getLogger());
 
         Droplet.getLogger().info("Done! Droplet started in {}ms.",
                 System.currentTimeMillis() - Droplet.startTime);
+    }
+
+    /**
+     * Loads environment variables.
+     */
+    private static void loadEnvironment() {
+        var env = Droplet.environment = Config.read(
+                System.getenv(), ConfigType.PROPERTIES);
+
+        // Set the debug mode.
+        Droplet.isDebug = env.getBoolean("DROPLET_DEBUG", false);
+        Log.setDebug(Droplet.getLogger());
     }
 
     /**

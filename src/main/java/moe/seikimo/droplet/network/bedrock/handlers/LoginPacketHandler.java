@@ -1,11 +1,13 @@
 package moe.seikimo.droplet.network.bedrock.handlers;
 
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
+import moe.seikimo.droplet.entity.DropletEntity;
 import moe.seikimo.droplet.network.ProtocolInfo;
 import moe.seikimo.droplet.network.bedrock.BedrockInterface;
 import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
+import moe.seikimo.droplet.player.DropletPlayer;
+import moe.seikimo.droplet.player.data.LoginData;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.data.PacketCompressionAlgorithm;
 import org.cloudburstmc.protocol.bedrock.packet.*;
@@ -62,21 +64,12 @@ public final class LoginPacketHandler implements BedrockPacketHandler {
 
     @Override
     public PacketSignal handle(LoginPacket packet) {
-        try {
-            // Parse the client's identity data.
-            var chain = packet.getChain();
-            var chainData = EncryptionUtils.validateChain(chain);
-            var claims = chainData.identityClaims();
-            var clientPublicKey = claims.parsedIdentityPublicKey();
-            // System.out.println(claims.extraData);
+        var logger = this.networkSession.getLogger();
 
-            // Parse the client's data.
-            var clientStr = packet.getExtra();
-            var clientData = Jwts.parser()
-                    .verifyWith(clientPublicKey)
-                    .build()
-                    .parseSignedClaims(clientStr);
-            // System.out.println(clientData.getPayload());
+        try {
+            // Parse the login data.
+            var loginData = LoginData.from(packet);
+            var clientPublicKey = EncryptionUtils.parseKey(loginData.publicKey());
 
             // Generate the JWT for the handshake.
             var keyPair = this.netInterface.getKeyPair();
@@ -93,13 +86,29 @@ public final class LoginPacketHandler implements BedrockPacketHandler {
                     keyPair.getPrivate(), clientPublicKey, salt);
             this.session.enableEncryption(secretKey);
 
+            // Set the player instance.
+            var player = new DropletPlayer(
+                    loginData.uuid(),
+                    loginData.displayName(),
+                    DropletEntity.nextEntityId++,
+                    this.server.getDefaultWorld(),
+                    this.networkSession,
+                    loginData.deviceInfo().device()
+            );
+            player.setDeviceInfo(loginData.deviceInfo());
+            player.setXuid(loginData.xuid());
+            player.setSkin(loginData.skin());
+
+            this.networkSession.setPlayer(player);
+            logger.debug("Created player instance from login data.");
+
             this.networkSession.getLogger().debug("Player has finished login process.");
         } catch (JoseException | NoSuchAlgorithmException | InvalidKeySpecException exception) {
-            this.server.getLogger().warn("Failed to parse JWT chain data.", exception);
+            logger.warn("Failed to parse JWT chain data.", exception);
             this.session.close("Invalid JWT chain data.");
             return PacketSignal.HANDLED;
         } catch (InvalidKeyException exception) {
-            this.server.getLogger().warn("Unable to generate the encryption secret key.", exception);
+            logger.warn("Unable to generate the encryption secret key.", exception);
             this.session.close("Unable to enable encryption.");
             return PacketSignal.HANDLED;
         }
@@ -121,7 +130,7 @@ public final class LoginPacketHandler implements BedrockPacketHandler {
         this.networkSession.sendPacket(resourcesPacket);
 
         // Switch to the resource packs packet handler.
-        this.session.setPacketHandler(
+        this.networkSession.setPacketHandler(
                 new ResourcesPacketHandler(
                         this.session, this.networkSession));
 

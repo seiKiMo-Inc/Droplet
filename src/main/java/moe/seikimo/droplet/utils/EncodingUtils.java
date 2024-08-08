@@ -1,6 +1,8 @@
 package moe.seikimo.droplet.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
 import moe.seikimo.droplet.world.WorldFormat.ChunkPos;
 import org.cloudburstmc.math.vector.Vector3i;
@@ -34,6 +36,26 @@ public interface EncodingUtils {
     static <T> T base64Decode(String base64, Class<T> type) {
         return EncodingUtils.GSON.fromJson(new String(
                 EncodingUtils.base64Decode(base64)), type);
+    }
+
+    /**
+     * Encodes a string into a Base64 string.
+     *
+     * @param string The string to encode.
+     * @return The encoded Base64 string.
+     */
+    static String base64Encode(String string) {
+        return EncodingUtils.base64Encode(string.getBytes());
+    }
+
+    /**
+     * Encodes a byte array into a Base64 string.
+     *
+     * @param bytes The byte array to encode.
+     * @return The encoded Base64 string.
+     */
+    static String base64Encode(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     /**
@@ -151,6 +173,17 @@ public interface EncodingUtils {
     }
 
     /**
+     * Decodes a JSON element into a Java object.
+     *
+     * @param element The JSON element.
+     * @param type The type of the Java object.
+     * @return The decoded Java object.
+     */
+    static <T> T jsonDecode(JsonElement element, Class<T> type) {
+        return EncodingUtils.GSON.fromJson(element, type);
+    }
+
+    /**
      * Calculates the length of the integer's bits.
      *
      * @param value The integer.
@@ -158,5 +191,30 @@ public interface EncodingUtils {
      */
     static int bitLength(int value) {
         return (int) Math.ceil(Math.log(value) / Math.log(2));
+    }
+
+    /**
+     * Returns the data part of a JSON web token.
+     *
+     * @param jwt The JSON web token.
+     * @return The data part of the JSON web token.
+     */
+    static JsonObject jwtDecode(String jwt) {
+        return EncodingUtils.jwtDecode(jwt, JsonObject.class);
+    }
+
+    /**
+     * Returns the data part of a JSON web token.
+     *
+     * @param jwt The JSON web token.
+     * @return The data part of the JSON web token.
+     */
+    static <T> T jwtDecode(String jwt, Class<T> type) {
+        var split = jwt.split("\\.");
+        if (split.length != 3) {
+            throw new IllegalArgumentException("Invalid JWT format.");
+        }
+
+        return EncodingUtils.base64Decode(split[1], type);
     }
 }

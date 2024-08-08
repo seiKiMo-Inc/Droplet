@@ -6,7 +6,6 @@ import moe.seikimo.droplet.utils.EncodingUtils;
 import moe.seikimo.droplet.world.WorldFormat.ChunkPos;
 import moe.seikimo.droplet.world.chunk.Chunk;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

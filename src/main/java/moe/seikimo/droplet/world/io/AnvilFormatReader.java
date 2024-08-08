@@ -59,13 +59,17 @@ public final class AnvilFormatReader implements WorldReader {
 
         for (var regionFile : regionFiles) {
             var region = new RegionFile(regionFile);
-            var thread = new Thread(() ->
-                    this.readRegion(worldInstance, region));
-            threads.add(thread);
+            this.threads.add(new Thread(() ->
+                    this.readRegion(worldInstance, region)));
         }
 
-        for (var thread : threads) {
+        // Start all threads.
+        for (var thread : this.threads) {
             thread.start();
+        }
+        // Wait for all threads to finish.
+        for (var thread : this.threads) {
+            thread.join();
         }
 
         return worldInstance;

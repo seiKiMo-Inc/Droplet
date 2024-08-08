@@ -70,7 +70,7 @@ public final class JavaInterface implements NetworkInterface {
         return new ServerStatusInfo(
                 new VersionInfo(codec.getMinecraftVersion(), codec.getProtocolVersion()),
                 new PlayerInfo(1000, this.server.getPlayerCount(), Collections.emptyList()),
-                Component.text(this.name + "\n" + this.subName),
+                Component.text(STR."\{this.name}\n\{this.subName}"),
                 null, false
         );
     }

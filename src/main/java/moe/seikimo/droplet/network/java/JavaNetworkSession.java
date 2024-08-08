@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.NetworkSession;
 import moe.seikimo.droplet.network.shared.BasePacket;
+import moe.seikimo.droplet.utils.enums.Device;
 import moe.seikimo.handler.DataReceiver;
 
 import java.util.Map;
@@ -25,7 +26,11 @@ public final class JavaNetworkSession extends NetworkSession implements DataRece
      * @return The network session.
      */
     public static JavaNetworkSession from(Session session) {
-        return sessions.computeIfAbsent(session, JavaNetworkSession::new);
+        return sessions.computeIfAbsent(session, k -> {
+            var networkSession = new JavaNetworkSession(k);
+            networkSession.setDevice(Device.JAVA);
+            return networkSession;
+        });
     }
 
     private final Session handle;

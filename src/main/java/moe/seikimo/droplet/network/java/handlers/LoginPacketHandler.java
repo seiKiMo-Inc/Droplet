@@ -1,8 +1,11 @@
 package moe.seikimo.droplet.network.java.handlers;
 
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEventValue;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.java.JavaNetworkSession;
 import moe.seikimo.droplet.network.shared.play.DropletChunkPacket;
@@ -21,11 +24,20 @@ public interface LoginPacketHandler {
                 0, false, GameMode.CREATIVE, Dimension.OVERWORLD
         ));
 
-        var i = 0;
-        for (var chunk : Server.getInstance().getDefaultWorld().getChunks().values()) {
-            if (i++ > 12) break;
+        session.sendPacket(new ClientboundGameEventPacket(
+                GameEvent.LEVEL_CHUNKS_LOAD_START, null
+        ));
 
-            if (chunk != null) session.sendPacket(new DropletChunkPacket(chunk));
+        var world = Server.getInstance().getDefaultWorld();
+        for (var x = -2; x <= 2; x++) {
+            for (var z = -2; z <= 2; z++) {
+                var chunk = world.getChunkAt(x, z);
+                if (chunk != null) {
+                    session.sendPacket(new DropletChunkPacket(chunk));
+                } else {
+                    session.getLogger().warn("Chunk ({}, {}) is null.", x, z);
+                }
+            }
         }
 
         ThreadUtils.runAfter(() -> {
