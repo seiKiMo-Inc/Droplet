@@ -1,7 +1,7 @@
 package moe.seikimo.droplet.network.java;
 
-import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.packet.Packet;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;

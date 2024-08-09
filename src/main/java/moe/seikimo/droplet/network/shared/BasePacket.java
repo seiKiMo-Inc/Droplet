@@ -1,6 +1,6 @@
 package moe.seikimo.droplet.network.shared;
 
-import com.github.steveice10.packetlib.packet.Packet;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 
 import java.util.Collection;

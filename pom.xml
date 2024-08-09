@@ -13,15 +13,16 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <protocol.java>1.21-SNAPSHOT</protocol.java>
         <protocol.bedrock>3.0.0.Beta3-SNAPSHOT</protocol.bedrock>
     </properties>
 
     <dependencies>
         <!-- Minecraft Java Protocol -->
         <dependency>
-            <groupId>com.github.steveice10</groupId>
-            <artifactId>mcprotocollib</artifactId>
-            <version>1.20.4-1-SNAPSHOT</version>
+            <groupId>org.geysermc.mcprotocollib</groupId>
+            <artifactId>protocol</artifactId>
+            <version>${protocol.java}</version>
             <scope>compile</scope>
         </dependency>
 

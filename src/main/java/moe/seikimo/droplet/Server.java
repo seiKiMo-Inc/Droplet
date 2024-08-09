@@ -1,6 +1,6 @@
 package moe.seikimo.droplet;
 
-import com.github.steveice10.packetlib.packet.Packet;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import lombok.Getter;
 import lombok.Setter;
 import moe.seikimo.droplet.block.BlockPalette;

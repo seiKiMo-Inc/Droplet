@@ -1,7 +1,7 @@
 package moe.seikimo.droplet.inventory;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 public interface Item {
     /**

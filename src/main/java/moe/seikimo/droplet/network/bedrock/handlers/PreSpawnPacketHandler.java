@@ -1,6 +1,6 @@
 package moe.seikimo.droplet.network.bedrock.handlers;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.block.BlockPalette;
 import moe.seikimo.droplet.entity.DropletEntity;

@@ -1,8 +1,8 @@
 package moe.seikimo.droplet.network.shared.play;
 
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
-import com.github.steveice10.packetlib.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityInfo;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.network.shared.BasePacket;
 import moe.seikimo.droplet.utils.ConversionUtils;
@@ -45,8 +45,9 @@ public final class DropletChunkPacket extends BasePacket {
 
         return List.of(new ClientboundLevelChunkWithLightPacket(
                 chunk.getX(), chunk.getZ(), chunk.encodeJava(),
-                ConversionUtils.convert(chunk.getHeightMaps()),
-                new BlockEntityInfo[0], chunk.getJavaLightData()
+                chunk.getHeightMaps(),
+                new BlockEntityInfo[0],
+                chunk.getJavaLightData()
         ));
     }
 }

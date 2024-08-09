@@ -1,18 +1,18 @@
 package moe.seikimo.droplet.network.java;
 
-import com.github.steveice10.mc.auth.service.SessionService;
-import com.github.steveice10.mc.protocol.MinecraftConstants;
-import com.github.steveice10.mc.protocol.MinecraftProtocol;
-import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
-import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
-import com.github.steveice10.mc.protocol.data.status.VersionInfo;
-import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
-import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
-import com.github.steveice10.packetlib.AbstractServer;
-import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.packet.Packet;
-import com.github.steveice10.packetlib.tcp.TcpServer;
+import org.geysermc.mcprotocollib.auth.SessionService;
+import org.geysermc.mcprotocollib.network.AbstractServer;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.tcp.TcpServer;
+import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
+import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import moe.seikimo.droplet.Server;
@@ -68,9 +68,9 @@ public final class JavaInterface implements NetworkInterface {
         var codec = ProtocolInfo.JAVA_CODEC;
 
         return new ServerStatusInfo(
-                new VersionInfo(codec.getMinecraftVersion(), codec.getProtocolVersion()),
-                new PlayerInfo(1000, this.server.getPlayerCount(), Collections.emptyList()),
                 Component.text(STR."\{this.name}\n\{this.subName}"),
+                new PlayerInfo(1000, this.server.getPlayerCount(), Collections.emptyList()),
+                new VersionInfo(codec.getMinecraftVersion(), codec.getProtocolVersion()),
                 null, false
         );
     }

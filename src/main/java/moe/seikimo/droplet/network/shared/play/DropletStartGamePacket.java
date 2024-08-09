@@ -1,9 +1,10 @@
 package moe.seikimo.droplet.network.shared.play;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.packetlib.packet.Packet;
+import net.kyori.adventure.key.Key;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import lombok.RequiredArgsConstructor;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.network.ProtocolInfo;
@@ -139,7 +140,7 @@ public final class DropletStartGamePacket extends BasePacket {
         return List.of(new ClientboundLoginPacket(
                 this.entityId,
                 this.isHardcore,
-                new String[] {"minecraft:world"}, // World Names
+                new Key[] {Key.key("world")}, // World Names
                 0, // Max Players (unused)
                 config.getInt("world.max_render_distance", 32),
                 config.getInt("world.max_simulation_distance", 32),
@@ -147,8 +148,8 @@ public final class DropletStartGamePacket extends BasePacket {
                 false, // Enable respawn screen
                 true, // Limited crafting
                 new PlayerSpawnInfo(
-                        this.dimension.getName(),
-                        "minecraft:world", // World name
+                        this.dimension.getId(),
+                        Key.key("world"), // World name
                         0, // World seed
                         this.gameMode,
                         null, // Previous GameMode
@@ -156,7 +157,8 @@ public final class DropletStartGamePacket extends BasePacket {
                         true, // Flat world
                         null, // Last death position
                         0 // Portal cooldown
-                )
+                ),
+                false
         ));
     }
 }

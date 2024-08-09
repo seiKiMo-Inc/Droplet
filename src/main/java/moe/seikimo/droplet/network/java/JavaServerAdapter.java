@@ -1,8 +1,8 @@
 package moe.seikimo.droplet.network.java;
 
-import com.github.steveice10.packetlib.event.server.ServerAdapter;
-import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
 import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.network.event.server.ServerAdapter;
+import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
 
 @RequiredArgsConstructor
 public final class JavaServerAdapter extends ServerAdapter {

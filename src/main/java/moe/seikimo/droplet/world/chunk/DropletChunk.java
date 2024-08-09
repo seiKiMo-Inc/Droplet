@@ -1,6 +1,6 @@
 package moe.seikimo.droplet.world.chunk;
 
-import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntLists;
