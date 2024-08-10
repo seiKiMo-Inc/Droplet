@@ -1,18 +1,19 @@
 package moe.seikimo.droplet.network.java;
 
+import moe.seikimo.droplet.network.java.handlers.CommonPacketHandler;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.tcp.TcpServer;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
-import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
+import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import moe.seikimo.droplet.Server;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public final class JavaInterface implements NetworkInterface {
     @Getter private final Server server;
     private final AbstractServer mcServer;
-    @Getter private final ObjectHandler<JavaNetworkSession, Packet> packetHandler = new ObjectHandler<>();
+    @Getter private final ObjectHandler<JavaNetworkSession, MinecraftPacket> packetHandler = new ObjectHandler<>();
 
     private String name, subName;
 
@@ -46,11 +47,12 @@ public final class JavaInterface implements NetworkInterface {
         // Apply server constants.
         this.mcServer.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
         this.mcServer.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, true);
-        this.mcServer.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) this::getServerInfo);
+        this.mcServer.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, this::getServerInfo);
 
         // Register packet handlers.
-        this.getPacketHandler().register(ServerboundFinishConfigurationPacket.class, (JavaNetworkSession s, ServerboundFinishConfigurationPacket _) -> LoginPacketHandler.handle(s));
-        this.getPacketHandler().register(ServerboundChatCommandPacket.class, (JavaNetworkSession s, ServerboundChatCommandPacket p) -> InGamePacketHandler.handle(s, p));
+        this.getPacketHandler().register(ServerboundCustomPayloadPacket.class, CommonPacketHandler::handle);
+        this.getPacketHandler().register(ServerboundFinishConfigurationPacket.class, LoginPacketHandler::handle);
+        this.getPacketHandler().register(ServerboundChatCommandPacket.class, InGamePacketHandler::handle);
 
         // Add session listener.
         this.mcServer.addListener(new JavaServerAdapter(this));
@@ -70,7 +72,7 @@ public final class JavaInterface implements NetworkInterface {
         return new ServerStatusInfo(
                 Component.text(STR."\{this.name}\n\{this.subName}"),
                 new PlayerInfo(1000, this.server.getPlayerCount(), Collections.emptyList()),
-                new VersionInfo(codec.getMinecraftVersion(), codec.getProtocolVersion()),
+                new VersionInfo(STR."Droplet \{codec.getMinecraftVersion()}", codec.getProtocolVersion()),
                 null, false
         );
     }

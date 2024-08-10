@@ -1,17 +1,21 @@
 package moe.seikimo.droplet.utils.constants;
 
+import moe.seikimo.droplet.utils.NetworkUtils;
 import org.cloudburstmc.protocol.bedrock.data.Ability;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.Set;
 
-public interface NetworkConstants {
-    Set<String> BLACKLISTED_PACKETS = Set.of(
-//            "LevelChunkPacket",
+public final class NetworkConstants {
+    public static final byte[] BRANDING;
+
+    public static final Set<String> BLACKLISTED_PACKETS = Set.of(
             "PlayerAuthInputPacket"
     );
 
-    Set<String> UNSENDED_PACKETS = Set.of(
+    public static final Set<String> UNSENDED_PACKETS = Set.of(
             "SetTimePacket",
             "InventoryContentPacket"
     );
@@ -20,7 +24,7 @@ public interface NetworkConstants {
      * These are all abilities presented to the client.
      * According to PMMP, they are *all* required.
      */
-    Set<Ability> BASE_LAYER = EnumSet.of(
+    public static final Set<Ability> BASE_LAYER = EnumSet.of(
             Ability.MAY_FLY,
             Ability.FLYING,
             Ability.NO_CLIP,
@@ -39,4 +43,15 @@ public interface NetworkConstants {
             Ability.ATTACK_MOBS,
             Ability.PRIVILEGED_BUILDER
     );
+
+    static {
+        /// <editor-fold desc="Branding">
+        var name = "Droplet".getBytes(StandardCharsets.UTF_8);
+        BRANDING = ByteBuffer
+                .allocate(name.length + NetworkUtils.getVarIntLength(name.length))
+                .put(NetworkUtils.getVarInt(name.length))
+                .put(name)
+                .array();
+        /// </editor-fold>
+    }
 }

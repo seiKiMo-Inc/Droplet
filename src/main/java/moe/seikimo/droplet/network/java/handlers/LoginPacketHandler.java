@@ -1,8 +1,10 @@
 package moe.seikimo.droplet.network.java.handlers;
 
+import moe.seikimo.droplet.utils.constants.NetworkConstants;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.GameEvent;
-import org.geysermc.mcprotocollib.protocol.data.game.level.notify.GameEventValue;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
@@ -16,12 +18,15 @@ import moe.seikimo.droplet.utils.enums.Dimension;
 public interface LoginPacketHandler {
     /**
      * Handles the {@link ServerboundFinishConfigurationPacket}.
-     *
-     * @param session The session.
      */
-    static void handle(JavaNetworkSession session) {
+    static void handle(JavaNetworkSession session, ServerboundFinishConfigurationPacket _packet) {
         session.sendPacket(new DropletStartGamePacket(
                 0, false, GameMode.CREATIVE, Dimension.OVERWORLD
+        ));
+
+        // Set the client branding.
+        session.sendPacket(new ClientboundCustomPayloadPacket(
+                Key.key("brand"), NetworkConstants.BRANDING
         ));
 
         session.sendPacket(new ClientboundGameEventPacket(
