@@ -23,7 +23,7 @@ public final class Biome {
             Biome.biomeDefinitions = (NbtMap) stream.readTag();
 
             stream.close();
-            Droplet.getLogger().info("Loaded {} biome definitions.", biomeDefinitions.size());
+            Droplet.getLogger().debug("Loaded {} biome definitions.", biomeDefinitions.size());
         } catch (Exception exception) {
             Droplet.getLogger().warn("Failed to load biome definitions.", exception);
         }

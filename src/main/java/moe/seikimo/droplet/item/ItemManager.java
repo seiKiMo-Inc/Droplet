@@ -43,7 +43,7 @@ public final class ItemManager {
                 }
             }
 
-            Droplet.getLogger().info("Loaded {} items into the item registry.", definitionMap.size());
+            Droplet.getLogger().debug("Loaded {} items into the item registry.", definitionMap.size());
 
             {
                 var data = EncodingUtils.jsonDecode(
@@ -80,7 +80,7 @@ public final class ItemManager {
             }
 
             Server.getInstance().setItemManager(new ItemManager(definitionMap.values(), creativeItems));
-            Droplet.getLogger().info("Loaded {} creative items.", creativeItems.size());
+            Droplet.getLogger().debug("Loaded {} creative items.", creativeItems.size());
         } catch (Exception exception) {
             Droplet.getLogger().warn("Unable to read item states. {}", exception.getMessage());
         }

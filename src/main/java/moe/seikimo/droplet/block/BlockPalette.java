@@ -96,7 +96,7 @@ public final class BlockPalette {
             BlockPalette.bedrockRegistry = registry.build();
 
             stream.close();
-            Droplet.getLogger().info("Loaded {} blocks into the block palette.", palette.size());
+            Droplet.getLogger().debug("Loaded {} blocks into the block palette.", palette.size());
         } catch (Exception exception) {
             Droplet.getLogger().warn("Unable to read block palette. {}", exception.getMessage());
         }
