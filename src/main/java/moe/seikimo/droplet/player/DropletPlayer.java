@@ -4,13 +4,18 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import moe.seikimo.droplet.entity.DropletLivingEntity;
+import moe.seikimo.droplet.inventory.DropletInventory;
+import moe.seikimo.droplet.inventory.Inventory;
 import moe.seikimo.droplet.network.NetworkSession;
-import moe.seikimo.droplet.utils.enums.Platform;
+import moe.seikimo.droplet.player.data.DeviceInfo;
+import moe.seikimo.droplet.player.impl.PlayerInventoryViewer;
+import moe.seikimo.droplet.utils.enums.Device;
 import moe.seikimo.droplet.world.World;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class DropletPlayer extends DropletLivingEntity implements Player {
+public class DropletPlayer extends DropletLivingEntity
+        implements Player, PlayerInventoryViewer {
     private final NetworkSession networkSession;
     private final Platform platform;
 
@@ -19,6 +24,8 @@ public class DropletPlayer extends DropletLivingEntity implements Player {
 
     @Setter private boolean spawned = false;
     @Setter private int renderDistance = 16;
+
+    @Setter private Inventory inventory = new DropletInventory();
 
     public DropletPlayer(
             long entityId,

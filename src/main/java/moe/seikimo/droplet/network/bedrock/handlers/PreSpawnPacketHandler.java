@@ -124,6 +124,14 @@ public final class PreSpawnPacketHandler implements BedrockPacketHandler {
         this.networkSession.sendPacket(respawnPacket);
 
         ThreadUtils.runAfter(() -> {
+            // Send the player's inventory.
+            if (player instanceof InventoryViewer viewer) {
+                viewer.sendContents(player.getInventory(), ContainerId.INVENTORY);
+
+                // TODO: Reference alternate player inventories.
+                viewer.sendContents(player.getInventory(), ContainerId.OFFHAND);
+                viewer.sendContents(player.getInventory(), ContainerId.ARMOR);
+            }
             // Prepare a response packet.
             var statusPacket = new PlayStatusPacket();
             statusPacket.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
