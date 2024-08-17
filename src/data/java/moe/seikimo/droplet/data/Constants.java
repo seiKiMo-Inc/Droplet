@@ -5,6 +5,7 @@ import java.io.File;
 public interface Constants {
     File BEDROCK_BLOCK_PALETTE = new File(DataGenerator.getBaseDir(), "bedrock_block_palette.nbt");
     File JAVA_TO_BEDROCK_MAP = new File(DataGenerator.getBaseDir(), "blocksJ2B.json");
+    File BEDROCK_TO_JAVA_MAP = new File(DataGenerator.getBaseDir(), "blocks.nbt");
     File MINECRAFT_BLOCK_MAP = new File(DataGenerator.getBaseDir(), "blocks.json");
 
     File DROPLET_PALETTE_OUTPUT = new File(DataGenerator.getBaseDir(), "output/droplet_block_palette.nbt");
