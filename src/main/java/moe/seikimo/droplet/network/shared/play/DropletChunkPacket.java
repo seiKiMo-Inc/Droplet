@@ -33,7 +33,7 @@ public final class DropletChunkPacket extends BasePacket {
         // TODO: Support chunk caching.
         packet.setCachingEnabled(false);
         packet.setRequestSubChunks(false);
-        packet.setSubChunksLength(chunk.getSections().length);
+        packet.setSubChunksLength(chunk.getSectionCount());
         packet.setData(chunk.encodeBedrock());
 
         return List.of(packet);

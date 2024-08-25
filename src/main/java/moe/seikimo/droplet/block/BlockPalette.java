@@ -31,7 +31,10 @@ public final class BlockPalette {
     @Getter private static final Map<MinecraftBlock, Integer>
             javaPaletteMap = new HashMap<>();
 
-    @Getter private static int airBlock = 0;
+    @Getter private static int
+            airBlock = 0,
+            javaAirBlock = 0,
+            bedrockAirBlock = 0;
 
     @Getter private static final Map<String, Integer>
             bedrockBlockMap = new HashMap<>();
@@ -81,6 +84,8 @@ public final class BlockPalette {
                 // Set the air block.
                 if (javaIdentifier.equals("minecraft:air")) {
                     BlockPalette.airBlock = id;
+                    BlockPalette.javaAirBlock = javaId;
+                    BlockPalette.bedrockAirBlock = bedrockId;
                 }
 
                 // Create a block definition for Bedrock.
@@ -100,6 +105,16 @@ public final class BlockPalette {
         } catch (Exception exception) {
             Droplet.getLogger().warn("Unable to read block palette. {}", exception.getMessage());
         }
+    }
+
+    /**
+     * Fetches the runtime ID of a block state from the Droplet runtime ID.
+     *
+     * @param dropletId The Droplet runtime ID.
+     * @return The Java runtime ID.
+     */
+    public static int getBedrockRuntimeId(int dropletId) {
+        return BlockPalette.palette.get(dropletId).getBedrockRuntimeId();
     }
 
     /**

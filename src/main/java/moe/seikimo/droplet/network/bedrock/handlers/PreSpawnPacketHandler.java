@@ -1,5 +1,6 @@
 package moe.seikimo.droplet.network.bedrock.handlers;
 
+import moe.seikimo.droplet.network.shared.play.DropletChunkPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import moe.seikimo.droplet.Server;
 import moe.seikimo.droplet.block.BlockPalette;
@@ -8,7 +9,6 @@ import moe.seikimo.droplet.inventory.InventoryViewer;
 import moe.seikimo.droplet.network.bedrock.BedrockNetworkSession;
 import moe.seikimo.droplet.network.shared.play.DropletStartGamePacket;
 import moe.seikimo.droplet.network.shared.play.DropletTimePacket;
-import moe.seikimo.droplet.utils.FileUtils;
 import moe.seikimo.droplet.utils.ThreadUtils;
 import moe.seikimo.droplet.utils.enums.Dimension;
 import moe.seikimo.droplet.world.biome.Biome;
@@ -20,8 +20,6 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.ContainerId;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.*;
 import org.cloudburstmc.protocol.common.PacketSignal;
-
-import java.io.File;
 
 // network chunk packet update thingy
 // send 12 non-null chunks in a 4x4 grid
@@ -117,26 +115,16 @@ public final class PreSpawnPacketHandler implements BedrockPacketHandler {
         this.networkSession.sendPacket(attributesPacket);
 
         // Begin to send chunks.
-//        var world = Server.getInstance().getDefaultWorld();
-//        for (var x = -2; x <= 2; x++) {
-//            for (var z = -2; z <= 2; z++) {
-//                var chunk = world.getChunkAt(x, z);
-//                if (chunk == null) {
-//                    System.out.printf("Chunk at %s, %s is null.%n", x, z);
-//                    continue;
-//                }
-//
-//                var chunkPacket = new DropletChunkPacket(chunk);
-//                this.networkSession.sendPacket(chunkPacket);
-//            }
-//        }
+        var world = Server.getInstance().getDefaultWorld();
+        for (var x = -2; x <= 2; x++) {
+            for (var z = -2; z <= 2; z++) {
+                var chunk = world.getChunkAt(x, z);
+                if (chunk == null) {
+                    System.out.printf("Chunk at %s, %s is null.%n", x, z);
+                    continue;
+                }
 
-        for (var x = 0; x < 21; x++) {
-            for (var y = 0; y < 21; y++) {
-                var file = new File("chunks/" + x + "." + y + "-serialized");
-                if (!file.exists()) continue;
-
-                var chunkPacket = FileUtils.readPacket(0x3a, file);
+                var chunkPacket = new DropletChunkPacket(chunk);
                 this.networkSession.sendPacket(chunkPacket);
             }
         }

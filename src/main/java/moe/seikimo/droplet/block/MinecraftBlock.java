@@ -1,12 +1,14 @@
 package moe.seikimo.droplet.block;
 
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import moe.seikimo.droplet.data.types.BedrockBlock;
 import org.cloudburstmc.nbt.NbtMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public record MinecraftBlock(
         String name,
         Map<String, String> properties
@@ -53,17 +55,16 @@ public record MinecraftBlock(
     }
 
     /**
-     * Converts a MinecraftBlock to a BedrockBlock.
+     * Parses a Java block object to a MinecraftBlock.
      *
      * @param identifier The identifier.
      * @param state The state.
-     * @return The BedrockBlock.
+     * @return The MinecraftBlock.
      */
     public static MinecraftBlock fromJson(String identifier, JsonObject state) {
         var properties = new HashMap<String, String>();
-        state.entrySet().forEach(entry ->
-                properties.put(entry.getKey(),
-                        propertyParser(entry.getValue().getAsString())));
+        state.entrySet().forEach(entry -> properties.put(entry.getKey(),
+                propertyParser(entry.getValue().getAsString())));
 
         return new MinecraftBlock(identifier, properties);
     }
@@ -78,7 +79,7 @@ public record MinecraftBlock(
     public static MinecraftBlock fromNbt(String identifier, NbtMap state) {
         var properties = new HashMap<String, String>();
         state.forEach((key, value) -> properties.put(key,
-                propertyParser((String) value)));
+                propertyParser(value)));
 
         return new MinecraftBlock(identifier, properties);
     }
@@ -89,13 +90,17 @@ public record MinecraftBlock(
      * @param value The property's value.
      * @return The parsed property.
      */
-    public static String propertyParser(String value) {
-        if (value.equals("true")) {
+    public static String propertyParser(Object value) {
+        if (!(value instanceof String stringVal)) {
+            return value.toString();
+        }
+
+        if (stringVal.equals("true")) {
             return "1";
-        } else if (value.equals("false")) {
+        } else if (stringVal.equals("false")) {
             return "0";
         } else {
-            return value;
+            return stringVal;
         }
     }
 
@@ -106,6 +111,18 @@ public record MinecraftBlock(
         var map = NbtMap.builder();
         this.properties().forEach(map::putString);
         return map.build();
+    }
+
+    /**
+     * @return The name of the block without the namespace.
+     */
+    public String rawName() {
+        var name = this.name();
+        if (name.contains(":")) {
+            return name.split(":")[1];
+        } else {
+            return name;
+        }
     }
 
     @Override
@@ -132,6 +149,6 @@ public record MinecraftBlock(
 
     @Override
     public int hashCode() {
-        return this.properties().hashCode() + this.name().hashCode();
+        return this.toString().hashCode();
     }
 }

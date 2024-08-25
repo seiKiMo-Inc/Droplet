@@ -28,6 +28,11 @@ public interface Chunk {
     ChunkSection[] getSections();
 
     /**
+     * @return The count of chunk sections which aren't air.
+     */
+    int getSectionCount();
+
+    /**
      * Sets a section at the given index.
      *
      * @param section The index of the section.

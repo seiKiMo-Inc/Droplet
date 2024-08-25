@@ -1,14 +1,17 @@
 package moe.seikimo.droplet.world.chunk;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import moe.seikimo.droplet.block.Block;
 
 public interface ChunkSection {
     /**
      * @return The X coordinate of this chunk section.
      */
     int getY();
+
+    /**
+     * @return True if the chunk section has no blocks.
+     */
+    boolean isEmpty();
 
     /**
      * Gets a block in the section at the coordinates.

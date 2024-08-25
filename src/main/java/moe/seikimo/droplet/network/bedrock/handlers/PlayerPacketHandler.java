@@ -82,27 +82,7 @@ public final class PlayerPacketHandler implements BedrockPacketHandler {
         var command = packet.getCommand();
         var sender = packet.getCommandOriginData();
 
-        switch (command) {
-            case "/test" -> {
-                System.out.println("test");
-            }
-            case "/world" -> {
-                var world = Server.getInstance().getDefaultWorld();
-
-                System.out.println(world.getName());
-                System.out.println(world.getSeed());
-
-                var chunk = world.getChunkAt(0, 0);
-                System.out.println(Arrays.toString(chunk.getSections()));
-
-                var section = chunk.getSections()[4];
-                if (section instanceof DropletChunkSection chunkSection) {
-                    System.out.println(chunkSection.getStorage());
-                } else {
-                    System.out.println(section);
-                }
-            }
-        }
+        // TODO: Handle CommandRequestPacket.
 
         return PacketSignal.HANDLED;
     }

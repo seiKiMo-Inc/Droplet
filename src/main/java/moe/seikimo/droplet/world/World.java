@@ -1,5 +1,7 @@
 package moe.seikimo.droplet.world;
 
+import moe.seikimo.droplet.block.Block;
+import moe.seikimo.droplet.block.BlockState;
 import moe.seikimo.droplet.world.WorldFormat.ChunkPos;
 import moe.seikimo.droplet.world.chunk.Chunk;
 
@@ -31,6 +33,17 @@ public interface World {
      * @return The chunk at the given coordinates.
      */
     Chunk getChunkAt(int x, int z);
+
+    /**
+     * Gets the block at the given coordinates.
+     * TODO: Change to return a 'Block' type.
+     *
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     * @return The block at the given coordinates.
+     */
+    BlockState getBlockAt(int x, int y, int z);
 
     /**
      * Adds a chunk to the world.

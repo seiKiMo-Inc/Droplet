@@ -1,38 +1,46 @@
 package moe.seikimo.droplet.world.chunk;
 
+import lombok.extern.slf4j.Slf4j;
+import org.cloudburstmc.protocol.common.util.VarInts;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.IntLists;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import moe.seikimo.droplet.block.BlockStorage;
 import moe.seikimo.droplet.entity.Entity;
 import moe.seikimo.droplet.utils.EncodingUtils;
-import moe.seikimo.droplet.utils.objects.binary.SingletonBitArray;
 import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.protocol.common.util.VarInts;
 
 import java.util.BitSet;
 import java.util.List;
 
+@Slf4j
 @Getter
 @RequiredArgsConstructor
 public final class DropletChunk implements Chunk {
-    private static final byte VERSION = 9;
-    private static final byte[] EMPTY_BIOME_DATA;
+    public static final byte VERSION = 9;
+    private static final int WORLD_HEIGHT = 320;
+
+    private static final byte[] EMPTY_JAVA_CHUNK_DATA;
 
     static {
         var buffer = Unpooled.buffer();
         try {
-            var storage = new BlockStorage(SingletonBitArray.INSTANCE, IntLists.singleton(0));
-            storage.serialize(buffer);
+            buffer.writeShort(0); // Non-air block count.
+            buffer.writeByte(0); // bits per entry
+            buffer.writeByte(0); // air block state id
+            buffer.writeByte(0); // long array len
 
-            EMPTY_BIOME_DATA = new byte[buffer.readableBytes()];
-            buffer.readBytes(EMPTY_BIOME_DATA);
+            // Biome palette.
+            buffer.writeByte(0); // bits per entry
+            buffer.writeByte(0x27); // biome entry
+            buffer.writeByte(0); // indexed data
+
+            EMPTY_JAVA_CHUNK_DATA = new byte[buffer.readableBytes()];
+            buffer.readBytes(EMPTY_JAVA_CHUNK_DATA);
         } finally {
             buffer.release();
         }
@@ -47,6 +55,20 @@ public final class DropletChunk implements Chunk {
 
     @Getter @Setter
     private NbtMap heightMaps;
+
+    @Override
+    public int getSectionCount() {
+        var empty = WORLD_HEIGHT / 16;
+        for (var ci = empty - 1; ci >= 0; ci--) {
+            var section = this.sections[ci];
+            if (section == null || section.isEmpty()) {
+                empty = ci;
+            } else {
+                break;
+            }
+        }
+        return empty;
+    }
 
     @Override
     public void setSection(int section, ChunkSection chunkSection) {
@@ -77,22 +99,34 @@ public final class DropletChunk implements Chunk {
 
     @Override
     public ByteBuf encodeBedrock() {
+        // TODO: Cache this.
+
         var buffer = Unpooled.buffer();
 
         // Write chunk sections.
-        for (var section : this.getSections()) {
+        var sectionCount = this.getSectionCount();
+        for (var i = 0; i < sectionCount; i++) {
+            var section = this.getSectionByIndex(i - 4);
             if (section == null) {
-                buffer.writeBytes(EMPTY_BIOME_DATA);
+                buffer.writeByte(DropletChunkSection.SECTION_VERSION); // Version.
+                buffer.writeByte(0); // Storage count.
+                buffer.writeByte(i); // Layer number.
             } else {
                 buffer.writeBytes(section.encodeBedrock());
             }
         }
 
         // Write biome data.
-        buffer.writeBytes(EMPTY_BIOME_DATA);
+        // Taken from `@serenityjs/world`
+        for (var i = 0; i < 24; i++) {
+            buffer.writeByte(0);
+            VarInts.writeInt(buffer, 1 << 1);
+        }
 
         // Border block data.
         buffer.writeByte(0);
+
+        // TODO: Write block entities.
 
         return buffer;
     }
@@ -101,31 +135,16 @@ public final class DropletChunk implements Chunk {
     public byte[] encodeJava() {
         var buffer = Unpooled.buffer();
 
-        {
-            // Write chunk sections.
-            for (var section : this.getSections()) {
-                if (section == null) {
-                    // TODO: Write empty chunk section data.
-                    throw new UnsupportedOperationException("Empty chunk sections are not supported.");
-                } else {
-                    buffer.writeBytes(section.encodeJava());
-                }
+        for (var i = -4; i < 16; i++) try {
+            var section = this.getSectionByIndex(i);
+            if (section == null) {
+                buffer.writeBytes(EMPTY_JAVA_CHUNK_DATA);
+            } else {
+//                buffer.writeBytes(section.encodeJava());
+                buffer.writeBytes(EMPTY_JAVA_CHUNK_DATA);
             }
-        }
-
-        {
-            // Write biomes to the buffer.
-            for (var z = 0; z < 16; z++) {
-                for (var x = 0; x < 16; x++) {
-                    buffer.writeByte(127);
-                }
-            }
-        }
-
-        {
-            // Write block entities to the buffer.
-            VarInts.writeInt(buffer, 0);
-            // TODO: Write block entities to the Java buffer.
+        } catch (Exception exception) {
+            log.error("Unable to encode Java chunk section.", exception);
         }
 
         return EncodingUtils.toBytes(buffer);

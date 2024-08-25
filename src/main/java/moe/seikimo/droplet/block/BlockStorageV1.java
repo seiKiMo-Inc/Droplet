@@ -12,23 +12,23 @@ import java.util.Arrays;
 
 @Getter
 // Taken from GeyserMC's BlockStorage.java
-public final class BlockStorage {
+public final class BlockStorageV1 {
     public static final int SIZE = 4096;
 
     private final IntList palette;
     private BitArray bitArray;
 
-    public BlockStorage(int airBlockId) {
+    public BlockStorageV1(int airBlockId) {
         this(airBlockId, BitArrayVersion.V2);
     }
 
-    public BlockStorage(int airBlockId, BitArrayVersion version) {
+    public BlockStorageV1(int airBlockId, BitArrayVersion version) {
         this.bitArray = version.createArray(SIZE);
         this.palette = new IntArrayList(16);
         this.palette.add(airBlockId);
     }
 
-    public BlockStorage(BitArray bitArray, IntList palette) {
+    public BlockStorageV1(BitArray bitArray, IntList palette) {
         this.palette = palette;
         this.bitArray = bitArray;
     }

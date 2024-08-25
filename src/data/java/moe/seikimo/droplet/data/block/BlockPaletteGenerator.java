@@ -40,6 +40,8 @@ public final class BlockPaletteGenerator {
 
         var dropletPalette = new ArrayList<NbtMap>();
 
+        int bedrockAir = -1, javaAir = -1;
+
         var noIdBlocks = new ArrayList<MinecraftBlock>();
         for (var entry : USE_BLOCKS ?
                 blocks.entrySet() : mapping.entrySet()) {
@@ -52,6 +54,10 @@ public final class BlockPaletteGenerator {
             var javaBedrockId = paletteMap.get(javaBlock.hashCode());
             if (bedrockId != null) {
                 block.putInt("bid", bedrockId);
+
+                if (bedrockBlock.name().equals("minecraft:air")) {
+                    bedrockAir = bedrockId;
+                }
             } else if (javaBedrockId != null) {
                 block.putInt("bid", javaBedrockId);
             } else {
@@ -62,6 +68,10 @@ public final class BlockPaletteGenerator {
             var javaId = blockStates.get(javaBlock);
             if (javaId != null) {
                 block.putInt("jid", javaId);
+
+                if (javaBlock.name().equals("minecraft:air")) {
+                    javaAir = javaId;
+                }
             } else {
                 noIdBlocks.add(javaBlock);
             }
@@ -86,6 +96,8 @@ public final class BlockPaletteGenerator {
             stream.close();
 
             BlockPaletteGenerator.getLogger().info("Wrote block palette to file.");
+            BlockPaletteGenerator.getLogger().info("Bedrock air block ID: {}", bedrockAir);
+            BlockPaletteGenerator.getLogger().info("Java air block ID: {}", javaAir);
 
             // Write blocks with no ID.
             var noIdBuilder = new StringBuilder();

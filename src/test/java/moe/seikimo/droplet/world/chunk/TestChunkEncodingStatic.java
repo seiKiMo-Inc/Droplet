@@ -9,7 +9,10 @@ import org.junit.Test;
 
 import static moe.seikimo.droplet.utils.EncodingUtils.toBytes;
 
-public final class DropletChunkSectionTest {
+/**
+ * A static test which has specific block IDs to test Java chunk encoding.
+ */
+public final class TestChunkEncodingStatic {
     /** This is the 1.20.50 block ID for a 'cobblestone_wall'. */
     private static final int BLOCK_ID_1 = 18660;
     private static final int JAVA_ID_1 = 8009;
@@ -32,7 +35,8 @@ public final class DropletChunkSectionTest {
     /**
      * Checks for proper encoding of a chunk section into the Java chunk format.
      */
-    @Test public void encodeJavaChunk() {
+    @Test
+    public void encodeJavaChunk() {
         // Load palette data.
         BlockPalette.load();
 
@@ -57,7 +61,7 @@ public final class DropletChunkSectionTest {
         // Encode the section.
         var encodedData = section.encodeJava();
         System.out.println("Encoded data length: " + encodedData.readableBytes());
-        System.out.println(">>> [Encoded Data] " + firstBytes(encodedData, 10));
+        System.out.println("[Encoded Data] " + firstBytes(encodedData, 10));
 
         // Compare the encoded data to the expected data.
         if (CHECK_BLOCK_COUNT) {
