@@ -1,5 +1,9 @@
 package moe.seikimo.droplet;
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import moe.seikimo.droplet.commands.BlockCommand;
+import moe.seikimo.droplet.commands.CommandSource;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,18 +34,22 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class Server {
+public final class Server extends CommandSource {
     /**
      * Creates a new server instance.
      */
     public static void initialize() {
-        Server.instance = new Server();
+        var server = Server.instance = new Server();
 
         // Load server data.
         BlockPalette.load();
         ItemManager.load();
         Biome.load();
         DropletEntity.loadIdentifiers();
+
+        // Register commands.
+        var dispatcher = server.getDispatcher();
+        BlockCommand.register(dispatcher);
     }
 
     @Getter private static Server instance;
@@ -62,6 +70,8 @@ public final class Server {
 
     @Getter private final Config config
             = Config.read(new File("server.properties"));
+    @Getter private final CommandDispatcher<CommandSource> dispatcher
+            = new CommandDispatcher<>();
 
     @Getter @Setter private World defaultWorld;
     @Getter @Setter private ItemManager itemManager;
@@ -200,6 +210,29 @@ public final class Server {
      */
     public int getPlayerCount() {
         return this.onlinePlayers.size();
+    }
+
+    /// </editor-fold>
+
+    /// <editor-fold desc="Commands">
+
+    @Override
+    public Server asServer() {
+        return this;
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        this.getLogger().info(message);
+    }
+
+    /**
+     * Executes a command as the server.
+     *
+     * @param command The command to execute.
+     */
+    public void executeCommand(String command) throws CommandSyntaxException {
+        this.getDispatcher().execute(command, this);
     }
 
     /// </editor-fold>

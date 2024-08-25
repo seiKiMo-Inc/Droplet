@@ -1,5 +1,6 @@
 package moe.seikimo.droplet;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
 import moe.seikimo.droplet.utils.Log;
 import moe.seikimo.droplet.utils.objects.Config;
@@ -118,9 +119,11 @@ public final class Droplet {
 
             try {
                 // Invoke the command.
-                // TODO: Execute the command.
-            } catch (Exception e) {
-                logger.warn("An error occurred while trying to invoke command.", e);
+                Server.getInstance().executeCommand(input);
+            } catch (CommandSyntaxException ex) {
+                logger.error(ex.getMessage());
+            } catch (Exception ex) {
+                logger.warn("An error occurred while trying to invoke command.", ex);
             }
         }
     }
