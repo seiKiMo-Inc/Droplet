@@ -20,6 +20,11 @@ public final class DataGenerator {
             = LoggerFactory.getLogger("Data Generator");
 
     public static void main(String[] args) {
+        var outputDir = new File(baseDir, "output");
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            throw new RuntimeException("Failed to create output directory.");
+        }
+
         // Dump data.
         BlockPaletteGenerator.generate();
         DebugFileGenerator.generate();
