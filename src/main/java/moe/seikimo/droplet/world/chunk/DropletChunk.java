@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public final class DropletChunk implements Chunk {
     public static final byte VERSION = 9;
-    private static final int WORLD_HEIGHT = 320;
+    private static final int WORLD_HEIGHT = 384; // (-4 -> 19) * 16
 
     private static final byte[] EMPTY_JAVA_CHUNK_DATA;
 
@@ -83,12 +83,12 @@ public final class DropletChunk implements Chunk {
     @Override
     public ChunkSection getSectionByIndex(int index)
             throws IndexOutOfBoundsException {
-        if (index < -4 || index > 15) {
+        if (index < -4 || index > 19) {
             throw new IndexOutOfBoundsException(
-                    "Index must be between -4 and 15, inclusive.");
+                    "Index must be between -4 and 19, inclusive.");
         }
 
-        return sections[index + 4];
+        return this.sections[index + 4];
     }
 
     @Override
@@ -135,14 +135,13 @@ public final class DropletChunk implements Chunk {
     public byte[] encodeJava() {
         var buffer = Unpooled.buffer();
 
-        for (var i = -4; i < 16; i++) try {
+        for (var i = -4; i < 20; i++) try {
             var section = this.getSectionByIndex(i);
             if (section == null) {
-                buffer.writeBytes(EMPTY_JAVA_CHUNK_DATA);
-            } else {
-//                buffer.writeBytes(section.encodeJava());
-                buffer.writeBytes(EMPTY_JAVA_CHUNK_DATA);
+                section = new DropletChunkSection(i);
             }
+
+            buffer.writeBytes(section.encodeJava());
         } catch (Exception exception) {
             log.error("Unable to encode Java chunk section.", exception);
         }

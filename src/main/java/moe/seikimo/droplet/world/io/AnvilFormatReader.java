@@ -151,6 +151,7 @@ public final class AnvilFormatReader implements WorldReader {
         // Read the block data.
         var data = blockStates.getLongArray("data");
         if (data != null && data.length == 256) {
+            // Multi-value palette with block data.
             // Calculate how many bits are required.
             var bits = Math.max(EncodingUtils.bitLength(palette.size() - 1), 4);
             var bitArray = new SimpleBitArray(bits, 4096, data);
@@ -162,6 +163,16 @@ public final class AnvilFormatReader implements WorldReader {
                         var paletteIndex = bitArray.get(index);
                         var blockId = translated.get(paletteIndex);
 
+                        sectionInstance.setBlockAt(x, y, z, blockId);
+                    }
+                }
+            }
+        } else if (translated.size() == 1) {
+            // Single-value palette; all blocks are the same.
+            var blockId = translated.get(0);
+            for (var x = 0; x < 16; x++) {
+                for (var y = 0; y < 16; y++) {
+                    for (var z = 0; z < 16; z++) {
                         sectionInstance.setBlockAt(x, y, z, blockId);
                     }
                 }

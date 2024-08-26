@@ -217,4 +217,21 @@ public interface EncodingUtils {
 
         return EncodingUtils.base64Decode(split[1], type);
     }
+
+    /**
+     * Writes a variable integer.
+     *
+     * @param buf The buffer to write to.
+     * @param i The integer to write.
+     */
+    static void writeVarInt(ByteBuf buf, int i) {
+        while (true) {
+            if ((i & 0xFFFFFF80) == 0) {
+                buf.writeByte(i);
+                return;
+            }
+            buf.writeByte(i & 0x7F | 0x80);
+            i >>>= 7;
+        }
+    }
 }

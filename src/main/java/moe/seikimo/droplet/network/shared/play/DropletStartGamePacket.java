@@ -140,7 +140,7 @@ public final class DropletStartGamePacket extends BasePacket {
         return List.of(new ClientboundLoginPacket(
                 this.entityId,
                 this.isHardcore,
-                new Key[] {Key.key("world")}, // World Names
+                new Key[] {Key.key("overworld")}, // World Names
                 0, // Max Players (unused)
                 config.getInt("world.max_render_distance", 32),
                 config.getInt("world.max_simulation_distance", 32),
@@ -149,7 +149,7 @@ public final class DropletStartGamePacket extends BasePacket {
                 true, // Limited crafting
                 new PlayerSpawnInfo(
                         this.dimension.getId(),
-                        Key.key("world"), // World name
+                        Key.key("overworld"), // World name
                         0, // World seed
                         this.gameMode,
                         null, // Previous GameMode

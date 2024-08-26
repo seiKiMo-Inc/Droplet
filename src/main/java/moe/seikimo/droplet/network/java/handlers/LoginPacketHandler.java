@@ -14,6 +14,8 @@ import moe.seikimo.droplet.network.shared.play.DropletChunkPacket;
 import moe.seikimo.droplet.network.shared.play.DropletStartGamePacket;
 import moe.seikimo.droplet.utils.ThreadUtils;
 import moe.seikimo.droplet.utils.enums.Dimension;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundSetChunkCacheCenterPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundSetChunkCacheRadiusPacket;
 
 public interface LoginPacketHandler {
     /**
@@ -33,6 +35,10 @@ public interface LoginPacketHandler {
                 GameEvent.LEVEL_CHUNKS_LOAD_START, null
         ));
 
+        // Set the player's chunk radius center.
+        session.sendPacket(new ClientboundSetChunkCacheCenterPacket(0, 0));
+        session.sendPacket(new ClientboundSetChunkCacheRadiusPacket(32));
+
         var world = Server.getInstance().getDefaultWorld();
         for (var x = -2; x <= 2; x++) {
             for (var z = -2; z <= 2; z++) {
@@ -45,10 +51,9 @@ public interface LoginPacketHandler {
             }
         }
 
-        ThreadUtils.runAfter(() -> {
-            session.sendPacket(new ClientboundPlayerPositionPacket(
-                    0, 0, 0, 0, 0, 0
-            ));
-        }, 3000);
+        ThreadUtils.runAfter(() ->
+                session.sendPacket(new ClientboundPlayerPositionPacket(
+                        0, 0, 0, 0, 0, 0
+                )), 1500);
     }
 }

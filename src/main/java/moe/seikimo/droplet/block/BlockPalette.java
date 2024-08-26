@@ -118,6 +118,16 @@ public final class BlockPalette {
     }
 
     /**
+     * Fetches the runtime ID of a block state from the Droplet runtime ID.
+     *
+     * @param dropletId The Droplet runtime ID.
+     * @return The Bedrock runtime ID.
+     */
+    public static int getJavaRuntimeId(int dropletId) {
+        return BlockPalette.palette.get(dropletId).getJavaRuntimeId();
+    }
+
+    /**
      * Fetches the Bedrock block definition from the Bedrock identifier.
      *
      * @param identifier The Bedrock identifier.

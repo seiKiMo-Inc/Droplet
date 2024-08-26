@@ -8,7 +8,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import moe.seikimo.droplet.block.BlockPalette;
 import moe.seikimo.droplet.block.BlockStorageV2;
+import moe.seikimo.droplet.utils.EncodingUtils;
 import moe.seikimo.droplet.utils.objects.binary.BitArrayVersion;
+import org.cloudburstmc.protocol.common.util.VarInts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +87,29 @@ public final class DropletChunkSection implements ChunkSection {
 
     @Override
     public ByteBuf encodeJava() {
+        var buffer = Unpooled.buffer();
+        var blocks = this.getLayer(0);
+
+        // Write non-air blocks count.
+        buffer.writeShort(blocks.getBlockCount());
+
+        // Write blocks to the buffer.
+        BlockStorageV2.serializeJava(blocks, buffer,
+                BlockPalette::getJavaRuntimeId);
+
+        // Write biomes to the buffer.
+        // Sourced from: https://wiki.vg/Chunk_Format#Example
+        buffer.writeByte(1); // bits per entry
+        EncodingUtils.writeVarInt(buffer, 2); // palette length
+        buffer.writeBytes(new byte[]{0x27, 0x03});
+        EncodingUtils.writeVarInt(buffer, 1);
+        buffer.writeBytes(new byte[]{
+                (byte) 0xCC, (byte) 0xFF,
+                (byte) 0xCC, (byte) 0xFF,
+                (byte) 0xCC, (byte) 0xFF,
+                (byte) 0xCC, (byte) 0xFF
+        });
+
 //        var bitArray = this.getStorage().getBitArray();
 //        var palette = this.getStorage().getPalette();
 //
@@ -172,6 +197,6 @@ public final class DropletChunkSection implements ChunkSection {
 //            });
 //        }
 
-        return Unpooled.buffer();
+        return buffer;
     }
 }
